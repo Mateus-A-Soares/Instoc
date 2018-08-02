@@ -8,6 +8,6 @@
 </head>
 <body>
 
-	<h1>Segundo commit :):)</h1>
+	<h1>Segundo commit :)</h1>
 </body>
 </html>
