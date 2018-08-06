@@ -2,6 +2,7 @@ package br.com.lupus.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
@@ -10,14 +11,15 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 /**
- * <h1> Classe de configuração do Spring Framework
- * <p> Mapeia todos os métodos de end point, e define a pasta com todas as páginas de retorno.
+ * <h1> Classe de configuração do Spring Framework </h1>
+ * <p> Mapeia todos os métodos de end point, e define a pasta com todas as páginas de retorno. </p>
  * 
  * @author Mateus A.S
  */
 @Configuration
 @EnableWebMvc
 @ComponentScan("br.com.lupus")
+@Import(value = PersistenceConfig.class)
 public class WebConfig implements WebMvcConfigurer {
 	
 	@Override
