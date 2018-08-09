@@ -22,6 +22,10 @@ import org.springframework.web.servlet.view.JstlView;
 @Import(value = PersistenceConfig.class)
 public class WebConfig implements WebMvcConfigurer {
 	
+	/**
+	 *  	Método que define para o Spring MVC o prefixo e o sufixo de todo retorno dos end-point's mapeados,
+	 *  como também o interpretador do arquivo de retorno (a ViewClass).
+	 */
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
 		
@@ -32,8 +36,13 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.viewResolver(resolver);
 	}
 	
+	/**
+	 * 
+	 * 		Método que mapeia ao Spring onde estão os pacotes de recursos livres de acesso público (resources).
+	 */
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		
 		registry
 			.addResourceHandler("/assets/**")
 			.addResourceLocations("/assets/");

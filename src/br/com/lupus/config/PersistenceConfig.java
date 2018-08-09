@@ -23,11 +23,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class PersistenceConfig {
 	
+	/**
+	 * 		Método que define as propriedades do Hibernate quanto
+	 * ao banco de dados utilizado, como o dialeto, o tipo de banco, etc
+	 * 
+	 * @return objeto Properties com as propriedades do Hibernate
+	 */
 	public Properties getHibernateProperties() {
 		
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.show_sql", "true");
-		properties.setProperty("hibernate.hbm2ddl.auto", "update");
+		properties.setProperty("hibernate.hbm2ddl.auto", "create");
 		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
 		properties.setProperty("hibernate.connection.CharSet", "utf8");
 		properties.setProperty("hibernate.connection.characterEncoding", "utf8");
@@ -35,6 +41,12 @@ public class PersistenceConfig {
 		return properties;
 	}
 	
+	/**
+	 * 		Bean que popula um objeto BasicDataSource com informações referentes ao banco,
+	 * como a url, o driver e o login
+	 * 
+	 * @return DataSource já preenchido
+	 */
 	@Bean
 	public DataSource getDataSource() {
 		
@@ -51,6 +63,13 @@ public class PersistenceConfig {
 		return dataSource;
 	}
 	
+	/**
+	 *  	Bean que popula um objeto LocalSessionFactoryBean com o DataSource contendo
+	 *  as informações de conexão com o banco, as propriedades configuradas para o Hibernate,
+	 *  e o pacote com os modelos para o ORM.
+	 *  
+	 * @return LocalSessionFactoryBean já populado
+	 */
 	@Bean							
 	public LocalSessionFactoryBean getSessionFactory() {
 		
@@ -61,6 +80,13 @@ public class PersistenceConfig {
 		return factoryBean;
 	}
 
+	/**
+	 * 		Bean que popula um objeto HibernateTransactionManager, que cuida da conexão com
+	 * o banco de dados,  com a LocalSessionFactory já populada com todas as informações que
+	 * o Hibernate precisa pra iniciar uma conexão.
+	 * 
+	 * @return HibernateTrasactionManager pronto para iniciar uma conexão com o banco
+	 */
 	@Bean
 	@Autowired
 	public HibernateTransactionManager getTransictionManager() {

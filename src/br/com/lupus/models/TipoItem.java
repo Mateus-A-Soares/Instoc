@@ -1,0 +1,96 @@
+package br.com.lupus.models;
+
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+/**
+ * <h1>TipoItem</h1>
+ * 
+ * <p> Classe modelo representativa da entidade tipo item, entidade que contém todos os aspectos de um tipo de item </p>
+ * 
+ * @author Mateus A.S
+ */
+@Entity
+@Table(name = "tipo_item")
+public class TipoItem {
+
+	// Parâmetros
+	
+	/** Identificação dos diferentes registros de tipos de itens.
+	 *  Valor gerado automáticamente ao ser persistido. */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(columnDefinition = "BIGINT UNSIGNED")
+	private Long id;
+	
+	/** String referente ao nome descritivo do item, com largura máxima de 75 caracteres */
+	@Column(unique = false, nullable = false, length = 75)
+	private String nome;
+	
+	/** Lista de tags que estão referenciadas por uma chave estrangeira ao id desse objeto*/
+	@OneToMany(mappedBy = "tipoItem", targetEntity = TipoItemTag.class)
+	private List<TipoItemTag> tagsAnexadas;
+
+	// Getters & Setters
+	
+	/**
+	 * Método que retorna o número de identificação (id) do registro TipoItem
+	 * 
+	 * @return id do TipoItem
+	 */
+	public Long getId() {
+		return id;
+	}
+	
+	/**
+	 * Define um número de identificação para o objeto.
+	 * (Sempre, ao ser persistido, o número de identificação é gerado automáticamente)
+	 * 
+	 * @param id número positivo a ser definido como id
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * Método que retorna o nome do registro
+	 * 
+	 * @return nome do TipoItem
+	 */
+	public String getNome() {
+		return nome;
+	}
+
+	/**
+	 * Define um nome (até 75 caracteres) descritivo para o TipoItem
+	 * 
+	 * @param nome nome descritivo de até 75 caracteres
+	 */
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	/**
+	 * Método que retorna uma lista de tags que estão referenciadas ao id desse objeto
+	 * 
+	 * @return lista de tags referenciadas ao id desse objeto
+	 */
+	public List<TipoItemTag> getTagsAnexadas() {
+		return tagsAnexadas;
+	}
+
+	/**
+	 * Define as tags anexadas a esse id
+	 * 
+	 * @param tagsAnexadas lista de tags a ser anexada a esse objeto
+	 */
+	public void setTagsAnexadas(List<TipoItemTag> tagsAnexadas) {
+		this.tagsAnexadas = tagsAnexadas;
+	}
+}

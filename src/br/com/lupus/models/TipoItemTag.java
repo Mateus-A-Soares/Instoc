@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -24,6 +26,7 @@ public class TipoItemTag {
 	 *  Valor gerado automáticamente ao ser persistido. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(columnDefinition = "BIGINT UNSIGNED")
 	private Long id;
 	
 	/** String referente ao nome da tag. Tamanho máximo de 50 caracteres. */
@@ -39,10 +42,15 @@ public class TipoItemTag {
 	@Column(unique = false, nullable = false, length = 50)
 	private String tipo;
 	
+	/** TipoItem a qual a tag pertence. */
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "tipo_item_id")
+	private TipoItem tipoItem;
+	
 	// Getters & Setters
 
 	/**
-	 * Método que retorna o número de identificação do objeto TipoItemTag
+	 * Método que retorna o número de identificação do registro TipoItemTag
 	 * 
 	 * @return id da tag
 	 */
@@ -111,5 +119,24 @@ public class TipoItemTag {
 	 */
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
+	}
+	
+	/**
+	 * Método que retonar o TipoItem a qual a tag está anexada.
+	 * 
+	 * @return objeto TipoItem a qual a tag está anexada.
+	 */
+	public TipoItem getTipoItem() {
+		return tipoItem;
+	}
+	
+	/**
+	 * Define a qual TipoItem a tag é relacionada.
+	 *  
+	 * @param tipoItem objeto TipoItem (necessita ser populado com o registro de TipoItem já existente 
+	 * e não pendente a existir, com o campo id correto).
+	 */
+	public void setTipoItem(TipoItem tipoItem) {
+		this.tipoItem = tipoItem;
 	}
 }
