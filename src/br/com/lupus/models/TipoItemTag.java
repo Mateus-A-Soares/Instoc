@@ -19,6 +19,32 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "tipo_item_tag")
 public class TipoItemTag {
+	
+	// Construtores
+	
+	/**
+	 * Construtor vazio
+	 */
+	public TipoItemTag() {
+	}
+	
+	/**
+	 * Construtor que preenche todos os parâmetros do objeto
+	 * 
+	 * @param id parâmetro id do objeto TipoItemTag
+	 * @param cabecalho parâmetro cabecalho do objeto TipoItemTag
+	 * @param corpo parâmetro corpo do objeto TipoItemTag
+	 * @param tipo parâmetro tipo do objeto TipoItemTag
+	 * @param tipoItem parâmetro tipoItem do objeto TipoItemTag
+	 */
+	public TipoItemTag(Long id, String cabecalho, String corpo, String tipo, TipoItem tipoItem) {
+		
+		this.id = id;
+		this.cabecalho = cabecalho;
+		this.corpo = corpo;
+		this.tipo = tipo;
+		this.tipoItem = tipoItem;
+	}
 
 	// Parâmetros
 	
@@ -60,6 +86,7 @@ public class TipoItemTag {
 
 	/**
 	 * Define um número de identificação para o objeto TipoItemTag
+	 * (Sempre, ao ser persistido, o número de identificação é gerado automaticamente)
 	 * 
 	 * @param id número de identificação
 	 */

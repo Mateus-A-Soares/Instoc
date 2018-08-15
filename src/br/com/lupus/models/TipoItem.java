@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -19,6 +20,29 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "tipo_item")
 public class TipoItem {
+	
+	// Construtores
+	
+	/**
+	 * Construtor vazio
+	 */
+	public TipoItem() {
+	}
+	
+	/**
+	 * Construtor que preenche todos os parâmetros do objeto TipoItem
+	 * 
+	 * @param id parâmetro id do objeto TipoItem
+	 * @param nome parâmetro nome do objeto TipoItem
+	 * @param tagsAnexadas parâmetro tagsAnexadas do objeto TipoItem
+	 */
+	public TipoItem(Long id, String nome, Usuario cadastrante, List<TipoItemTag> tagsAnexadas) {
+		
+		this.id = id;
+		this.nome = nome;
+		this.cadastrante = cadastrante;
+		this.tagsAnexadas = tagsAnexadas;
+	}
 
 	// Parâmetros
 	
@@ -32,6 +56,10 @@ public class TipoItem {
 	/** String referente ao nome descritivo do item, com largura máxima de 75 caracteres */
 	@Column(unique = false, nullable = false, length = 75)
 	private String nome;
+	
+	/** Usuário que cadastrou/está tentando cadastrar esse registro */
+	@ManyToOne(optional = false)
+	private Usuario cadastrante;
 	
 	/** Lista de tags que estão referenciadas por uma chave estrangeira ao id desse objeto*/
 	@OneToMany(mappedBy = "tipoItem", targetEntity = TipoItemTag.class)
@@ -50,7 +78,7 @@ public class TipoItem {
 	
 	/**
 	 * Define um número de identificação para o objeto.
-	 * (Sempre, ao ser persistido, o número de identificação é gerado automáticamente)
+	 * (Sempre, ao ser persistido, o número de identificação é gerado automaticamente)
 	 * 
 	 * @param id número positivo a ser definido como id
 	 */
@@ -74,6 +102,24 @@ public class TipoItem {
 	 */
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	
+	/**
+	 * Retorna o usuario cadastrante desse registro
+	 * 
+	 * @return usuario cadastrante
+	 */
+	public Usuario getCadastrante() {
+		return cadastrante;
+	}
+
+	/**
+	 * Define o usuário cadastrante para esse registro
+	 * 
+	 * @param cadastrante usuário que vai cadastrar esse registro
+	 */
+	public void setCadastrante(Usuario cadastrante) {
+		this.cadastrante = cadastrante;
 	}
 
 	/**
