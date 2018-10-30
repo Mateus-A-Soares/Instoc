@@ -33,7 +33,7 @@ public class PersistenceConfig {
 		
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.show_sql", "true");
-		properties.setProperty("hibernate.hbm2ddl.auto", "create");
+		properties.setProperty("hibernate.hbm2ddl.auto", "update");
 		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
 		properties.setProperty("hibernate.connection.CharSet", "utf8");
 		properties.setProperty("hibernate.connection.characterEncoding", "utf8");
@@ -59,7 +59,7 @@ public class PersistenceConfig {
 				+ "createDatabaseIfNotExist=true&"
 				+ "characterEncoding=utf-8");
 		dataSource.setUsername("root");
-		dataSource.setPassword("");
+		dataSource.setPassword("root132");
 		return dataSource;
 	}
 	

@@ -69,8 +69,12 @@ public class Usuario {
 	@Column(unique = false, nullable = false)
 	private Permissao permissao;
 	
+	/** Chave de acesso do usuário */
+	@Column(unique = false, nullable = false, length = 20)
+	private String senha;
+	
 	// Getters & Setters
-
+	
 	/**
 	 * Retorna o número de identificação do registro Usuário 
 	 * 
@@ -160,5 +164,23 @@ public class Usuario {
 	 */
 	public void setPermissao(Permissao permissao) {
 		this.permissao = permissao;
+	}
+	
+	/**
+	 *  Retorna a chave de acesso do usuário 
+	 *   
+	 * @return chave de acesso do usuário 
+	 */
+	public String getSenha() {
+		return senha;
+	}
+
+	/**
+	 * Define uma chave de acesso para o usuário
+	 * 
+	 * @param senha chave de acesso
+	 */
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 }
