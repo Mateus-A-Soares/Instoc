@@ -13,20 +13,38 @@ import br.com.lupus.models.Usuario;
 public class UsuarioService {
 	@Autowired
 	private UsuarioDao usuarioDao;
-	
-	public Usuario getEmalSenha(Usuario usuario, BindingResult brUsuario) throws ValidationException, EntityNotFound {
-		
-		if(brUsuario.hasErrors()) {
-			
+
+	public Usuario getEmailSenha(Usuario usuario, BindingResult brUsuario) throws ValidationException, EntityNotFound {
+
+		if (brUsuario.hasFieldErrors("email") || brUsuario.hasFieldErrors("senha")) {
+
 			throw new ValidationException();
-		}else {
-			
+		} else {
+
 			Usuario usuarioAutenticado = usuarioDao.getEmailSenha(usuario.getEmail(), usuario.getSenha());
-			if(usuarioAutenticado == null) {
-				
+			if (usuarioAutenticado == null) {
+
 				throw new EntityNotFound();
-			}else{
-			
+			} else {
+
+				return usuarioAutenticado;
+			}
+		}
+	}
+
+	public Usuario valida(Usuario usuario, BindingResult brUsuario) throws ValidationException, EntityNotFound {
+
+		if (brUsuario.hasFieldErrors("email") || brUsuario.hasFieldErrors("senha")) {
+
+			throw new ValidationException();
+		} else {
+
+			Usuario usuarioAutenticado = usuarioDao.getEmailSenha(usuario.getEmail(), usuario.getSenha());
+			if (usuarioAutenticado == null) {
+
+				throw new EntityNotFound();
+			} else {
+
 				return usuarioAutenticado;
 			}
 		}

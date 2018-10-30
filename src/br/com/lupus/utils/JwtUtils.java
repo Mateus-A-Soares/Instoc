@@ -1,4 +1,4 @@
-package br.com.lupus.config.utils;
+package br.com.lupus.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;

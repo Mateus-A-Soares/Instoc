@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.servlet4preview.GenericFilter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import br.com.lupus.config.utils.JwtUtils;
+
 import br.com.lupus.models.Usuario;
+import br.com.lupus.utils.JwtUtils;
 
 /**
  * 	Filtro utilizado para validar se existe um token na requisição, e se sim, validar o próprio token
@@ -44,7 +45,7 @@ public class JWTFilter extends GenericFilter {
 				// Formato do Token inválido
 			}
 		} else {
-			// Formato do Token inválido
+			// Token nulo
 		}
 		chain.doFilter(req, res);
 	}

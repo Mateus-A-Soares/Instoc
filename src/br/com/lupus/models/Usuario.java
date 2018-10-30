@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.security.core.Authentication;
@@ -75,6 +76,7 @@ public class Usuario implements Authentication {
 
 	/** String que representa o nome do usuário */
 	@Column(unique = false, nullable = false, length = 75)
+	@Size(min = 3, max = 40)
 	private String nome;
 
 	/** String que representa o email do usuário */
@@ -84,6 +86,7 @@ public class Usuario implements Authentication {
 
 	/** Data de nascimento do usuário */
 	@Column(name = "data_nascimento", unique = false, nullable = false)
+	@NotNull
 	private Date dataNascimento;
 
 	/** Nível de permissão do usuário */
