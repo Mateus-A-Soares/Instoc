@@ -7,8 +7,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
- * <h1> Classe de configuração do Spring Framework </h1>
- * <p> Mapeia todos os métodos de end point, e define a pasta com todas as páginas de retorno. </p>
+ * <h1> Classe de configuração do Spring MVC </h1>
  * 
  * @author Mateus A.S
  */

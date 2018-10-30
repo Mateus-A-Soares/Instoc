@@ -6,10 +6,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.lupus.dao.DAO;
 
 @Repository
+@Transactional
 public abstract class AbstractJPA<T> implements DAO<T> {
 
 	@Autowired
