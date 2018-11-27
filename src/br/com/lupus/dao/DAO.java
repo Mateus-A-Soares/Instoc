@@ -13,6 +13,9 @@ public interface DAO<T> {
 
 	@Transactional
 	public T buscar(Long id);
+	
+	@Transactional
+	public T buscarEmail(String email);
 
 	@Transactional
 	public List<T> buscarTodos();

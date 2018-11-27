@@ -37,8 +37,8 @@ public class AutenticacaoController {
 	private UsuarioService usuarioService;
 	
 	/**
-	 *	End point de autenticação.
-	 *	Recebe um usuário, valida ele para poder retornar um token ao usuário de acesso a aplicação.
+	 *	End point de URL /api/v1/jwt
+	 *	Recebe um usuário na requisição, valida ele para poder retornar um token de acesso ao cliente
 	 *
 	 * @param usuario usuário populado com o email e a senha para tentativa de autenticação
 	 * @param brUsuario BindingResult com possíveis erros de validação

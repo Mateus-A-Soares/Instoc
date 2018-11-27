@@ -1,7 +1,10 @@
 package br.com.lupus.models;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,11 +12,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * <h1>Usuario</h1>
@@ -54,13 +63,15 @@ public class Usuario implements Authentication {
 	 * @param permissao
 	 *            parâmetro permissão do objeto
 	 */
-	public Usuario(Long id, String nome, String email, Date dataNascimento, Permissao permissao) {
+	public Usuario(Long id, String nome, String email, Date dataNascimento, Permissao permissao, String senha, boolean ativo) {
 
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.dataNascimento = dataNascimento;
 		this.permissao = permissao;
+		this.senha = senha;
+		this.ativo = ativo;
 	}
 
 	// Parâmetros
@@ -77,16 +88,21 @@ public class Usuario implements Authentication {
 	/** String que representa o nome do usuário */
 	@Column(unique = false, nullable = false, length = 75)
 	@Size(min = 3, max = 40)
+	@NotEmpty
 	private String nome;
 
 	/** String que representa o email do usuário */
 	@Column(unique = true, nullable = false, length = 125)
 	@Email
+	@NotEmpty
 	private String email;
 
 	/** Data de nascimento do usuário */
 	@Column(name = "data_nascimento", unique = false, nullable = false)
 	@NotNull
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@JsonFormat(pattern = "dd/MM/yyyy")
+	@Past
 	private Date dataNascimento;
 
 	/** Nível de permissão do usuário */
@@ -96,7 +112,12 @@ public class Usuario implements Authentication {
 	/** Chave de acesso do usuário */
 	@Column(unique = false, nullable = false, length = 20)
 	@Size(min = 3, max = 20)
+	@NotEmpty
 	private String senha;
+
+	/** Campo que define se o usuário se encontra ativo ou não */
+	@Column(nullable = false)
+	private Boolean ativo;
 
 	// Getters & Setters
 
@@ -217,39 +238,73 @@ public class Usuario implements Authentication {
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
+	
+
+	/**
+	 * Retorna o estado do usuário (ativo / desativado)
+	 *  
+	 * @return true se ativo, false se desativado
+	 */
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	/**
+	 * Define o estado do usuário (ativo / desativado)
+	 * @param ativo true se ativo, false se desativado
+	 */
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
 
 	// Métodos sobreescritos para a autenticação com o Spring Security
 	@Override
+	@JsonIgnore
 	public String getName() {
 		return nome;
 	}
 
+	@SuppressWarnings("serial")
 	@Override
+	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+		grantedAuthorities.add(new GrantedAuthority() {
+
+			@Override
+			public String getAuthority() {
+				return permissao.toString();
+			}
+		});
+		return grantedAuthorities;
 	}
 
 	@Override
+	@JsonIgnore
 	public Object getCredentials() {
 		return null;
 	}
 
 	@Override
+	@JsonIgnore
 	public Object getDetails() {
 		return null;
 	}
 
 	@Override
+	@JsonIgnore
 	public Object getPrincipal() {
 		return this;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isAuthenticated() {
 		return true;
 	}
 
 	@Override
+	@JsonIgnore
 	public void setAuthenticated(boolean arg0) throws IllegalArgumentException {
 	}
 }

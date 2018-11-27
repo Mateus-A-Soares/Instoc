@@ -8,6 +8,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import br.com.lupus.config.filters.JWTFilter;
+import br.com.lupus.models.Permissao;
 
 /**
  * <h1>	Classe de configuração do Spring Security </h1>
@@ -27,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 								.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 								.authorizeRequests()
 								.antMatchers("/api/v1/jwt", "/app/**", "/assets/**").permitAll()
+								.antMatchers("/api/v1/usuario/**").hasAuthority(Permissao.ADMINISTRADOR.toString())
 								.anyRequest().authenticated()
 								.and()
 								.csrf().disable()

@@ -26,7 +26,24 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 
 	/**
 	 * 	Implementação do método adicional do UsuarioDao que o AbstractJPA não supre.
-	 * 	Retorna um usuário pelo email e pos sua senha.
+	 * 	Retorna um usuário pelo email.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Usuario buscarEmail(String email) {
+		String hql = "FROM Usuario u WHERE u.email = :email";
+		Query query = getSessao().createQuery(hql);
+		query.setParameter("email", email);
+		List<Usuario> lista = (List<Usuario>) query.list();
+		if(!lista.isEmpty()) {
+			return lista.get(0);
+		}
+		return null;
+	}
+	
+	/**
+	 * 	Implementação do método adicional do UsuarioDao que o AbstractJPA não supre.
+	 * 	Retorna um usuário pelo email e por sua senha.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -38,6 +55,23 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 		List<Usuario> lista = (List<Usuario>) query.list();
 		if(!lista.isEmpty()) {
 			return lista.get(0);
+		}
+		return null;
+	}
+
+	/**
+	 * 	Implementação do método adicional do UsuarioDao que o AbstractJPA não supre.
+	 * 	Retorna uma lista de usuários pelo seu estado ativo.
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Usuario> getAtivo(boolean ativo) {
+		String hql = "FROM Usuario u WHERE u.ativo = :ativo";
+		Query query = getSessao().createQuery(hql);
+		query.setParameter("ativo", ativo);
+		List<Usuario> lista = (List<Usuario>) query.list();
+		if(!lista.isEmpty()) {
+			return lista;
 		}
 		return null;
 	}
