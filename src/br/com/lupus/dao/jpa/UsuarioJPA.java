@@ -1,8 +1,7 @@
 package br.com.lupus.dao.jpa;
 
 import java.util.List;
-
-import org.hibernate.Query;
+import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import br.com.lupus.dao.UsuarioDao;
@@ -32,9 +31,9 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 	@Override
 	public Usuario getEmail(String email) {
 		String hql = "FROM Usuario u WHERE u.email = :email";
-		Query query = getSessao().createQuery(hql);
+		TypedQuery<Usuario> query = getSessao().createQuery(hql);
 		query.setParameter("email", email);
-		List<Usuario> lista = (List<Usuario>) query.list();
+		List<Usuario> lista =  query.getResultList();
 		if(!lista.isEmpty()) {
 			return lista.get(0);
 		}
@@ -49,10 +48,10 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 	@Override
 	public Usuario getEmailSenha(String email, String senha) {
 		String hql = "FROM Usuario u WHERE u.email = :email AND u.senha = :senha";
-		Query query = getSessao().createQuery(hql);
+		TypedQuery<Usuario> query = getSessao().createQuery(hql);
 		query.setParameter("email", email);
 		query.setParameter("senha", senha);
-		List<Usuario> lista = (List<Usuario>) query.list();
+		List<Usuario> lista = (List<Usuario>) query.getResultList();
 		if(!lista.isEmpty()) {
 			return lista.get(0);
 		}
@@ -67,9 +66,9 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 	@Override
 	public List<Usuario> getAtivo(boolean ativo) {
 		String hql = "FROM Usuario u WHERE u.ativo = :ativo";
-		Query query = getSessao().createQuery(hql);
+		TypedQuery<Usuario> query = getSessao().createQuery(hql);
 		query.setParameter("ativo", ativo);
-		List<Usuario> lista = (List<Usuario>) query.list();
+		List<Usuario> lista = (List<Usuario>) query.getResultList();
 		if(!lista.isEmpty()) {
 			return lista;
 		}

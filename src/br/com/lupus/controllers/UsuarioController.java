@@ -62,6 +62,7 @@ public class UsuarioController {
 	public ResponseEntity<Object> acharUsuario(@PathVariable Long id){
 		try {
 			// 200 - OK
+			Usuario.setParametros(new Usuario(), "id", "nome", "email", "dataNascimento", "permissao", "ativo");
 			return ResponseEntity.ok(usuarioService.buscar(id));
 		}catch(EntityNotFound e) {
 			// 404 - NOT FOUND
@@ -112,6 +113,7 @@ public class UsuarioController {
 		try {
 			// 200 - OK
 			usuario.setId(id);
+			Usuario.setParametros(new Usuario(), "id", "nome", "email", "dataNascimento", "permissao", "ativo");
 			return ResponseEntity.ok(usuarioService.editar(usuario, brUsuario));
 		}catch (UnprocessableEntityException e) {
 			// 422 - UNPROCESSABLE ENTITY
@@ -135,6 +137,7 @@ public class UsuarioController {
 	public ResponseEntity<Object> desativarUsuario(@PathVariable Long id){
 		try {
 			// 200 - OK
+			Usuario.setParametros(new Usuario(), "id", "nome", "email", "dataNascimento", "permissao", "ativo");
 			return ResponseEntity.ok(usuarioService.desativar(id));
 		}catch (Exception e) {
 			// 500 - INTERNAL SERVER ERROR

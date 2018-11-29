@@ -1,7 +1,9 @@
 package br.com.lupus.dao.jpa;
 
 import java.util.List;
-import org.hibernate.Query;
+
+import javax.persistence.TypedQuery;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,9 +80,9 @@ public abstract class AbstractJPA<T> implements DAO<T> {
 	@Override
 	public T buscar(Long id) {
 		String hql = "FROM " + getNomeEntidade() + " o WHERE o.id = :id";
-		Query query = getSessao().createQuery(hql);
+		TypedQuery<T> query = getSessao().createQuery(hql);
 		query.setParameter("id", id);
-		List<T> lista = (List<T>) query.list();
+		List<T> lista = (List<T>) query.getResultList();
 		if(!lista.isEmpty()) {
 			return lista.get(0);
 		}
@@ -94,8 +96,8 @@ public abstract class AbstractJPA<T> implements DAO<T> {
 	@Override
 	public List<T> buscarTodos() {
 		String hql = "FROM " + getNomeEntidade();
-		Query query = getSessao().createQuery(hql);
-		return (List<T>) query.list();
+		TypedQuery<T> query = getSessao().createQuery(hql);
+		return query.getResultList();
 	}
 
 }

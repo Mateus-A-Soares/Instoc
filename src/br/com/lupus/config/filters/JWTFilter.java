@@ -6,10 +6,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.catalina.servlet4preview.GenericFilter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
 import br.com.lupus.models.Usuario;
 import br.com.lupus.utils.JwtUtils;
@@ -20,9 +19,7 @@ import br.com.lupus.utils.JwtUtils;
  * 	@author Mateus A.S
  */
 @Component
-public class JWTFilter extends GenericFilter {
-
-	private static final long serialVersionUID = 1L;
+public class JWTFilter extends GenericFilterBean {
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
