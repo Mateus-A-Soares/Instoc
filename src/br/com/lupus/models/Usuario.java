@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,17 +11,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import br.com.lupus.models.serializer.Model;
+import br.com.lupus.models.serializer.Serializer;
 
 /**
  * <h1>Usuario</h1>
@@ -38,7 +37,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "usuario")
-public class Usuario implements Authentication {
+@JsonSerialize(using = Serializer.class)
+public class Usuario extends Model implements Authentication {
 
 	private static final long serialVersionUID = 1L;
 
@@ -88,18 +88,15 @@ public class Usuario implements Authentication {
 	/** String que representa o nome do usuário */
 	@Column(unique = false, nullable = false, length = 75)
 	@Size(min = 3, max = 40)
-	@NotEmpty
 	private String nome;
 
 	/** String que representa o email do usuário */
 	@Column(unique = true, nullable = false, length = 125)
 	@Email
-	@NotEmpty
 	private String email;
 
 	/** Data de nascimento do usuário */
 	@Column(name = "data_nascimento", unique = false, nullable = false)
-	@NotNull
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	@Past
@@ -112,7 +109,6 @@ public class Usuario implements Authentication {
 	/** Chave de acesso do usuário */
 	@Column(unique = false, nullable = false, length = 20)
 	@Size(min = 3, max = 20)
-	@NotEmpty
 	private String senha;
 
 	/** Campo que define se o usuário se encontra ativo ou não */
@@ -256,7 +252,7 @@ public class Usuario implements Authentication {
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
-
+	
 	// Métodos sobreescritos para a autenticação com o Spring Security
 	@Override
 	@JsonIgnore

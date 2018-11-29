@@ -4,12 +4,18 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import br.com.lupus.models.serializer.Model;
+import br.com.lupus.models.serializer.Serializer;
+
 
 /**
  * <h1> Ambiente</h1>
@@ -19,7 +25,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ambiente")
-public class Ambiente {
+@JsonSerialize(using = Serializer.class)
+public class Ambiente extends Model {
 
 	// Construtores
 	
@@ -46,8 +53,7 @@ public class Ambiente {
 		this.itens = itens;
 	}
 
-	// Parâmetros
-	
+	// Parâmetros	
 	/** Identificação dos diferentes registros de ambientes.
 	 *  Valor gerado automáticamente ao ser persistido. */
 	@Id
@@ -64,9 +70,9 @@ public class Ambiente {
 	private Usuario cadastrante;
 	
 	/** Lista de itens anexados a esse registro */
-	@OneToMany(mappedBy = "ambienteAtual", targetEntity = Item.class)
+	@OneToMany(mappedBy = "ambienteAtual", targetEntity = Item.class, fetch = FetchType.EAGER)
 	private List<Item> itens;
-
+	
 	// Getters & Setters
 	
 	/**
@@ -141,5 +147,4 @@ public class Ambiente {
 	public void setItens(List<Item> itens) {
 		this.itens = itens;
 	}
-	
 }

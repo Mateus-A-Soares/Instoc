@@ -34,17 +34,19 @@ public class UsuarioController {
 	
 	/**
 	 * 	End-point de URL /api/v1/usuario
-	 * 	Retorna ao cliente que fez a requisição um array de objetos JSON representando os usuários do sistema
+	 * 	Retorna ao cliente que fez a requisição um array de objetos JSON representando os usuários cadastrados no sistema
 	 * 
 	 * @return ResponseEntity populado com os usuários cadastrados no sistema
 	 */
 	@GetMapping("")
 	public ResponseEntity<Object> listarUsuarios(){
 		try {
-			
+			// 200 - OK
+			Usuario.setParametros(new Usuario(), "id", "nome", "email", "dataNascimento", "permissao", "ativo");
 			return ResponseEntity.ok(usuarioService.buscarTodos());
 		}catch (Exception e) {
-			
+			// 500 - INTERNAL SERVER ERROR
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -59,13 +61,14 @@ public class UsuarioController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Object> acharUsuario(@PathVariable Long id){
 		try {
-			
+			// 200 - OK
 			return ResponseEntity.ok(usuarioService.buscar(id));
 		}catch(EntityNotFound e) {
-			
+			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		}catch (Exception e) {
-			
+			// 500 - INTERNAL SERVER ERROR
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -82,14 +85,15 @@ public class UsuarioController {
 	@PostMapping("")
 	public ResponseEntity<Object> cadastraUsuario(@Valid @RequestBody Usuario usuario, BindingResult brUsuario){
 		try {
-			
+			// 202 - OK / NO CONTENT
 			usuarioService.salvar(usuario, brUsuario);
 			return ResponseEntity.noContent().build();
 		}catch (UnprocessableEntityException e) {
-
+			// 422 - UNPROCESSABLE ENTITY
 			return ResponseEntity.unprocessableEntity().body(BindingResultUtils.toHashMap(brUsuario));
 		}catch (Exception e) {
-			
+			// 500 - INTERNAL SERVER ERROR
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -106,14 +110,15 @@ public class UsuarioController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> editarUsuario(@PathVariable Long id, @Valid @RequestBody Usuario usuario, BindingResult brUsuario){
 		try {
-			
+			// 200 - OK
 			usuario.setId(id);
 			return ResponseEntity.ok(usuarioService.editar(usuario, brUsuario));
 		}catch (UnprocessableEntityException e) {
-
+			// 422 - UNPROCESSABLE ENTITY
 			return ResponseEntity.unprocessableEntity().body(BindingResultUtils.toHashMap(brUsuario));
 		}catch (Exception e) {
-			
+			// 500 - INTERNAL SERVER ERROR
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -129,10 +134,11 @@ public class UsuarioController {
 	@PutMapping("/desativar/{id}")
 	public ResponseEntity<Object> desativarUsuario(@PathVariable Long id){
 		try {
-			
+			// 200 - OK
 			return ResponseEntity.ok(usuarioService.desativar(id));
 		}catch (Exception e) {
-			
+			// 500 - INTERNAL SERVER ERROR
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

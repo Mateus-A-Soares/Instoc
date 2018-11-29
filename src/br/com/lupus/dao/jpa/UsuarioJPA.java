@@ -30,7 +30,7 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Usuario buscarEmail(String email) {
+	public Usuario getEmail(String email) {
 		String hql = "FROM Usuario u WHERE u.email = :email";
 		Query query = getSessao().createQuery(hql);
 		query.setParameter("email", email);

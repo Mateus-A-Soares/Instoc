@@ -9,36 +9,49 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import br.com.lupus.models.serializer.Model;
+import br.com.lupus.models.serializer.Serializer;
+
 /**
  * <h1>TipoItemTag</h1>
  * 
- * <p>Classe modelo representativa da entidade tag pertencente aos tipos de itens.</p>
+ * <p>
+ * Classe modelo representativa da entidade tag pertencente aos tipos de itens.
+ * </p>
  * 
  * @author Mateus A.S
  */
 @Entity
 @Table(name = "tipo_item_tag")
-public class TipoItemTag {
-	
+@JsonSerialize(using = Serializer.class)
+public class TipoItemTag extends Model {
+
 	// Construtores
-	
+
 	/**
 	 * Construtor vazio
 	 */
 	public TipoItemTag() {
 	}
-	
+
 	/**
 	 * Construtor que preenche todos os parâmetros do objeto
 	 * 
-	 * @param id parâmetro id do objeto TipoItemTag
-	 * @param cabecalho parâmetro cabecalho do objeto TipoItemTag
-	 * @param corpo parâmetro corpo do objeto TipoItemTag
-	 * @param tipo parâmetro tipo do objeto TipoItemTag
-	 * @param tipoItem parâmetro tipoItem do objeto TipoItemTag
+	 * @param id
+	 *            parâmetro id do objeto TipoItemTag
+	 * @param cabecalho
+	 *            parâmetro cabecalho do objeto TipoItemTag
+	 * @param corpo
+	 *            parâmetro corpo do objeto TipoItemTag
+	 * @param tipo
+	 *            parâmetro tipo do objeto TipoItemTag
+	 * @param tipoItem
+	 *            parâmetro tipoItem do objeto TipoItemTag
 	 */
 	public TipoItemTag(Long id, String cabecalho, String corpo, String tipo, TipoItem tipoItem) {
-		
+
 		this.id = id;
 		this.cabecalho = cabecalho;
 		this.corpo = corpo;
@@ -47,32 +60,36 @@ public class TipoItemTag {
 	}
 
 	// Parâmetros
-	
-	/** Identificação dos diferentes registros de tags.
-	 *  Valor gerado automáticamente ao ser persistido. */
+
+	/**
+	 * Identificação dos diferentes registros de tags. Valor gerado automáticamente
+	 * ao ser persistido.
+	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(columnDefinition = "BIGINT UNSIGNED")
 	private Long id;
-	
+
 	/** String referente ao nome da tag. Tamanho máximo de 50 caracteres. */
 	@Column(unique = false, nullable = false, length = 50)
 	private String cabecalho;
-	
+
 	/** String referente ao valor da tag. Tamanho máximo de 50 caracteres. */
 	@Column(unique = false, nullable = true, length = 50)
 	private String corpo;
-	
-	/** String referente ao tipo de dado que o valor da tag representa (como data, número, etc).
-	 * Tamanho máximo de 50 caracteres. */
+
+	/**
+	 * String referente ao tipo de dado que o valor da tag representa (como data,
+	 * número, etc). Tamanho máximo de 50 caracteres.
+	 */
 	@Column(unique = false, nullable = false, length = 50)
 	private String tipo;
-	
+
 	/** TipoItem a qual a tag pertence. */
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "tipo_item_id")
 	private TipoItem tipoItem;
-	
+
 	// Getters & Setters
 
 	/**
@@ -85,10 +102,11 @@ public class TipoItemTag {
 	}
 
 	/**
-	 * Define um número de identificação para o objeto TipoItemTag
-	 * (Sempre, ao ser persistido, o número de identificação é gerado automaticamente)
+	 * Define um número de identificação para o objeto TipoItemTag (Sempre, ao ser
+	 * persistido, o número de identificação é gerado automaticamente)
 	 * 
-	 * @param id número de identificação
+	 * @param id
+	 *            número de identificação
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -106,7 +124,8 @@ public class TipoItemTag {
 	/**
 	 * Define um nome para o objeto TipoItemTag (cabeçalho)
 	 * 
-	 * @param cabecalho nome a ser colocado na tag
+	 * @param cabecalho
+	 *            nome a ser colocado na tag
 	 */
 	public void setCabecalho(String cabecalho) {
 		this.cabecalho = cabecalho;
@@ -124,7 +143,8 @@ public class TipoItemTag {
 	/**
 	 * Define um nome para o objeto TipoItemTag (cabeçalho)
 	 * 
-	 * @param cabecalho nome a ser colocado na tag
+	 * @param cabecalho
+	 *            nome a ser colocado na tag
 	 */
 	public void setCorpo(String corpo) {
 		this.corpo = corpo;
@@ -142,12 +162,13 @@ public class TipoItemTag {
 	/**
 	 * Define um tipo para o objeto TipoItemTag
 	 * 
-	 * @param tipo tipo de dado do valor da tag
+	 * @param tipo
+	 *            tipo de dado do valor da tag
 	 */
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	
+
 	/**
 	 * Método que retonar o TipoItem a qual a tag está anexada.
 	 * 
@@ -156,12 +177,13 @@ public class TipoItemTag {
 	public TipoItem getTipoItem() {
 		return tipoItem;
 	}
-	
+
 	/**
 	 * Define a qual TipoItem a tag é relacionada.
-	 *  
-	 * @param tipoItem objeto TipoItem (necessita ser populado com o registro de TipoItem já existente 
-	 * e não pendente a existir, com o campo id correto).
+	 * 
+	 * @param tipoItem
+	 *            objeto TipoItem (necessita ser populado com o registro de TipoItem
+	 *            já existente e não pendente a existir, com o campo id correto).
 	 */
 	public void setTipoItem(TipoItem tipoItem) {
 		this.tipoItem = tipoItem;

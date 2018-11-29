@@ -10,34 +10,46 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import br.com.lupus.models.serializer.Model;
+import br.com.lupus.models.serializer.Serializer;
+
 /**
  * <h1>TipoItem</h1>
  * 
- * <p> Classe modelo representativa da entidade tipo item, entidade que contém todos os aspectos de um tipo de item </p>
+ * <p>
+ * Classe modelo representativa da entidade tipo item, entidade que contém todos
+ * os aspectos de um tipo de item
+ * </p>
  * 
  * @author Mateus A.S
  */
 @Entity
 @Table(name = "tipo_item")
-public class TipoItem {
-	
+@JsonSerialize(using = Serializer.class)
+public class TipoItem extends Model {
+
 	// Construtores
-	
+
 	/**
 	 * Construtor vazio
 	 */
 	public TipoItem() {
 	}
-	
+
 	/**
 	 * Construtor que preenche todos os parâmetros do objeto TipoItem
 	 * 
-	 * @param id parâmetro id do objeto TipoItem
-	 * @param nome parâmetro nome do objeto TipoItem
-	 * @param tagsAnexadas parâmetro tagsAnexadas do objeto TipoItem
+	 * @param id
+	 *            parâmetro id do objeto TipoItem
+	 * @param nome
+	 *            parâmetro nome do objeto TipoItem
+	 * @param tagsAnexadas
+	 *            parâmetro tagsAnexadas do objeto TipoItem
 	 */
 	public TipoItem(Long id, String nome, Usuario cadastrante, List<TipoItemTag> tagsAnexadas) {
-		
+
 		this.id = id;
 		this.nome = nome;
 		this.cadastrante = cadastrante;
@@ -45,28 +57,36 @@ public class TipoItem {
 	}
 
 	// Parâmetros
-	
-	/** Identificação dos diferentes registros de tipos de itens.
-	 *  Valor gerado automáticamente ao ser persistido. */
+
+	/**
+	 * Identificação dos diferentes registros de tipos de itens. Valor gerado
+	 * automáticamente ao ser persistido.
+	 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(columnDefinition = "BIGINT UNSIGNED")
 	private Long id;
-	
-	/** String referente ao nome descritivo do item, com largura máxima de 75 caracteres */
+
+	/**
+	 * String referente ao nome descritivo do item, com largura máxima de 75
+	 * caracteres
+	 */
 	@Column(unique = false, nullable = false, length = 75)
 	private String nome;
-	
+
 	/** Usuário que cadastrou/está tentando cadastrar esse registro */
 	@ManyToOne(optional = false)
 	private Usuario cadastrante;
-	
-	/** Lista de tags que estão referenciadas por uma chave estrangeira ao id desse objeto*/
+
+	/**
+	 * Lista de tags que estão referenciadas por uma chave estrangeira ao id desse
+	 * objeto
+	 */
 	@OneToMany(mappedBy = "tipoItem", targetEntity = TipoItemTag.class)
 	private List<TipoItemTag> tagsAnexadas;
 
 	// Getters & Setters
-	
+
 	/**
 	 * Método que retorna o número de identificação (id) do registro TipoItem
 	 * 
@@ -75,12 +95,13 @@ public class TipoItem {
 	public Long getId() {
 		return id;
 	}
-	
+
 	/**
-	 * Define um número de identificação para o objeto.
-	 * (Sempre, ao ser persistido, o número de identificação é gerado automaticamente)
+	 * Define um número de identificação para o objeto. (Sempre, ao ser persistido,
+	 * o número de identificação é gerado automaticamente)
 	 * 
-	 * @param id número positivo a ser definido como id
+	 * @param id
+	 *            número positivo a ser definido como id
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -98,12 +119,13 @@ public class TipoItem {
 	/**
 	 * Define um nome (até 75 caracteres) descritivo para o TipoItem
 	 * 
-	 * @param nome nome descritivo de até 75 caracteres
+	 * @param nome
+	 *            nome descritivo de até 75 caracteres
 	 */
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
+
 	/**
 	 * Retorna o usuario cadastrante desse registro
 	 * 
@@ -116,14 +138,16 @@ public class TipoItem {
 	/**
 	 * Define o usuário cadastrante para esse registro
 	 * 
-	 * @param cadastrante usuário que vai cadastrar esse registro
+	 * @param cadastrante
+	 *            usuário que vai cadastrar esse registro
 	 */
 	public void setCadastrante(Usuario cadastrante) {
 		this.cadastrante = cadastrante;
 	}
 
 	/**
-	 * Método que retorna uma lista de tags que estão referenciadas ao id desse objeto
+	 * Método que retorna uma lista de tags que estão referenciadas ao id desse
+	 * objeto
 	 * 
 	 * @return lista de tags referenciadas ao id desse objeto
 	 */
@@ -134,7 +158,8 @@ public class TipoItem {
 	/**
 	 * Define as tags anexadas a esse id
 	 * 
-	 * @param tagsAnexadas lista de tags a ser anexada a esse objeto
+	 * @param tagsAnexadas
+	 *            lista de tags a ser anexada a esse objeto
 	 */
 	public void setTagsAnexadas(List<TipoItemTag> tagsAnexadas) {
 		this.tagsAnexadas = tagsAnexadas;
