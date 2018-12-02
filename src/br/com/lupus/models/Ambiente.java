@@ -4,13 +4,17 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import br.com.lupus.models.serializer.Model;
@@ -63,6 +67,7 @@ public class Ambiente extends Model {
 
 	/** String descritiva do ambiente, máximo de 75 caracteres */
 	@Column(unique = false, nullable = false, length = 75)
+	@Size(max = 75, message = "Tamanho máximo de 75 caracteres")
 	private String descricao;
 
 	/** Usuário que cadastrou/está tentando cadastrar esse ambiente.*/
@@ -70,7 +75,8 @@ public class Ambiente extends Model {
 	private Usuario cadastrante;
 	
 	/** Lista de itens anexados a esse registro */
-	@OneToMany(mappedBy = "ambienteAtual", targetEntity = Item.class, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "ambienteAtual", targetEntity = Item.class)
+	@Fetch(FetchMode.SUBSELECT)
 	private List<Item> itens;
 	
 	// Getters & Setters

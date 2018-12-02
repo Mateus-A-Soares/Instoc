@@ -1,7 +1,6 @@
 package br.com.lupus.services;
 
 import java.util.List;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -85,7 +84,7 @@ public class UsuarioService {
 	 * @param brUsuario objeto populado com os possíveis erros de validação
 	 * @throws UnprocessableEntityException exception disparada quando há erros de validação
 	 */
-	public void salvar(@Valid Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
+	public void salvar(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
 		if (usuarioDao.getEmail(usuario.getEmail()) != null)
 			brUsuario.addError(new FieldError("usuario", "email", "endereço de email já cadastrado"));
 
@@ -120,7 +119,7 @@ public class UsuarioService {
 	 * @param brUsuario objeto populado com os possíveis erros de validação
 	 * @throws UnprocessableEntityException exception disparada quando há erros de validação
 	 */
-	public Usuario editar(@Valid Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
+	public Usuario editar(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
 		Usuario u = usuarioDao.getEmail(usuario.getEmail());
 		if (u != null && u.getId() != usuario.getId()) {
 			brUsuario.addError(new FieldError("usuario", "email", "endereço de email já cadastrado"));
