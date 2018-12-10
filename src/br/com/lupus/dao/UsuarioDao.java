@@ -7,9 +7,9 @@ import br.com.lupus.models.Usuario;
 
 public interface UsuarioDao extends DAO<Usuario> {
 	
-	public Usuario getEmailSenha(String email, String senha);
+	public Usuario buscar(String email, String senha);
 	
-	public Usuario getEmail(String email);
+	public Usuario buscar(String email);
 	
-	public List<Usuario> getAtivo(boolean ativo);
+	public List<Usuario> buscarTodos(boolean ativo);
 }

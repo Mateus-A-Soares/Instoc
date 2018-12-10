@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -71,11 +72,11 @@ public class Ambiente extends Model {
 	private String descricao;
 
 	/** Usuário que cadastrou/está tentando cadastrar esse ambiente.*/
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Usuario cadastrante;
 	
 	/** Lista de itens anexados a esse registro */
-	@OneToMany(mappedBy = "ambienteAtual", targetEntity = Item.class)
+	@OneToMany(mappedBy = "ambienteAtual", targetEntity = Item.class, fetch = FetchType.LAZY)
 	@Fetch(FetchMode.SUBSELECT)
 	private List<Item> itens;
 	
@@ -152,5 +153,10 @@ public class Ambiente extends Model {
 	 */
 	public void setItens(List<Item> itens) {
 		this.itens = itens;
+	}
+
+	@Override
+	public String toString() {
+		return "Ambiente [id=" + id + ", descricao=" + descricao + "]";
 	}
 }

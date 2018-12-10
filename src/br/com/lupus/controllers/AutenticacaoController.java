@@ -45,7 +45,7 @@ public class AutenticacaoController {
 	 * @return token
 	 */
 	@PostMapping("/jwt")
-	public ResponseEntity<Object> autentica(@Valid @RequestBody Usuario usuario, BindingResult brUsuario){
+	public ResponseEntity<Object> autenticar(@Valid @RequestBody Usuario usuario, BindingResult brUsuario){
 		try {
 			// 200 - OK
 			Usuario authUser = usuarioService.getEmailSenha(usuario, brUsuario);

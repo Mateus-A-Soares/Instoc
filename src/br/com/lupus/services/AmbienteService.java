@@ -23,7 +23,6 @@ import br.com.lupus.models.Usuario;
  * @author Mateus A.S
  */
 @Service
-@Transactional(value = TxType.REQUIRED)
 public class AmbienteService {
 
 	@Autowired
@@ -35,8 +34,7 @@ public class AmbienteService {
 	 * 
 	 * @return lista de ambientes cadastrados
 	 */
-	public List<Ambiente> listarAmbientes() {
-		Ambiente.setParametros(new Ambiente(), "id", "descricao");
+	public List<Ambiente> buscarAmbientes() {
 		return ambienteDao.buscarTodos();
 	}
 
@@ -49,10 +47,12 @@ public class AmbienteService {
 	 * @throws EntityNotFound
 	 *             disparada quando não existe ambiente referenciado ao id passado
 	 */
-	public Ambiente pegarAmbiente(Long id) throws EntityNotFound {
+	@Transactional(value = TxType.REQUIRED)
+	public Ambiente buscarAmbiente(Long id) throws EntityNotFound {
 		Ambiente ambiente = ambienteDao.buscar(id);
 		if (ambiente == null)
 			throw new EntityNotFound();
+		Hibernate.initialize(ambiente.getCadastrante());
 		Hibernate.initialize(ambiente.getItens()); // Popula os itens antes de retornar o ambiente
 		return ambiente;
 	}
@@ -69,13 +69,13 @@ public class AmbienteService {
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver erros de validação
 	 */
-	public void cadastrarAmbiente(Ambiente ambiente, BindingResult brAmbiente) throws UnprocessableEntityException {
+	public void persistirAmbiente(Ambiente ambiente, BindingResult brAmbiente) throws UnprocessableEntityException {
 		if (ambiente.getDescricao().isEmpty())
 			brAmbiente.addError(new FieldError("ambiente", "descricao", "A descrição não pode estar vazia"));
 		if (brAmbiente.hasFieldErrors())
 			throw new UnprocessableEntityException();
 		ambiente.setCadastrante((Usuario) SecurityContextHolder.getContext().getAuthentication());
-		ambienteDao.inserir(ambiente);
+		ambienteDao.persistir(ambiente);
 	}
 
 	/**
@@ -90,20 +90,19 @@ public class AmbienteService {
 	 * @return objeto ambiente populado com o registro que foi atualizado
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver erros de validação
-	 * @throws EntityNotFound 
+	 * @throws EntityNotFound
 	 */
-	public Ambiente editar(Ambiente ambiente, BindingResult brAmbiente) throws UnprocessableEntityException, EntityNotFound {
+	@Transactional(value = TxType.REQUIRED)
+	public Ambiente atualizar(Ambiente ambiente, BindingResult brAmbiente)
+			throws UnprocessableEntityException, EntityNotFound {
 		Ambiente ambienteAntigo = ambienteDao.buscar(ambiente.getId());
-		if(ambienteAntigo == null)
-			throw new EntityNotFound();
-		if (ambiente.getDescricao().isEmpty())
-			ambiente.setDescricao(ambienteAntigo.getDescricao());
-		if (ambiente.getCadastrante() == null)
-			ambiente.setCadastrante(ambienteAntigo.getCadastrante());
 		if (brAmbiente.hasFieldErrors())
 			throw new UnprocessableEntityException();
-		ambienteDao.alterar(ambiente);
-		return ambiente;
+		if (ambiente.getDescricao() != null)
+			ambienteAntigo.setDescricao(ambiente.getDescricao());
+		ambienteDao.atualizar(ambienteAntigo);
+		Hibernate.initialize(ambienteAntigo.getCadastrante());
+		return ambienteAntigo;
 	}
 
 	/**

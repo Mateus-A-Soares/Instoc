@@ -303,4 +303,9 @@ public class Usuario extends Model implements Authentication {
 	@JsonIgnore
 	public void setAuthenticated(boolean arg0) throws IllegalArgumentException {
 	}
+
+	@Override
+	public String toString() {
+		return "Usuario [id=" + id + ", nome=" + nome + "]";
+	}
 }

@@ -29,7 +29,7 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Usuario getEmail(String email) {
+	public Usuario buscar(String email) {
 		String hql = "FROM Usuario u WHERE u.email = :email";
 		TypedQuery<Usuario> query = getSessao().createQuery(hql);
 		query.setParameter("email", email);
@@ -46,7 +46,7 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Usuario getEmailSenha(String email, String senha) {
+	public Usuario buscar(String email, String senha) {
 		String hql = "FROM Usuario u WHERE u.email = :email AND u.senha = :senha";
 		TypedQuery<Usuario> query = getSessao().createQuery(hql);
 		query.setParameter("email", email);
@@ -64,7 +64,7 @@ public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Usuario> getAtivo(boolean ativo) {
+	public List<Usuario> buscarTodos(boolean ativo) {
 		String hql = "FROM Usuario u WHERE u.ativo = :ativo";
 		TypedQuery<Usuario> query = getSessao().createQuery(hql);
 		query.setParameter("ativo", ativo);

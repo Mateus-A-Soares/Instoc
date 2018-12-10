@@ -62,7 +62,7 @@ public class UsuarioController {
 	 * @return ResponseEntity populado com o usuário solicitado
 	 */
 	@GetMapping("/{id}")
-	public ResponseEntity<Object> pegarUsuario(@PathVariable Long id) {
+	public ResponseEntity<Object> buscarUsuario(@PathVariable Long id) {
 		try {
 			// 200 - OK
 			Usuario.setParametros(new Usuario(), "id", "nome", "email", "dataNascimento", "permissao", "ativo");
@@ -89,10 +89,10 @@ public class UsuarioController {
 	 * @return ResponseEntity com status 202
 	 */
 	@PostMapping("")
-	public ResponseEntity<Object> cadastraUsuario(@Valid @RequestBody Usuario usuario, BindingResult brUsuario) {
+	public ResponseEntity<Object> cadastrarUsuario(@Valid @RequestBody Usuario usuario, BindingResult brUsuario) {
 		try {
 			// 202 - OK / NO CONTENT
-			usuarioService.salvar(usuario, brUsuario);
+			usuarioService.persistir(usuario, brUsuario);
 			return ResponseEntity.noContent().build();
 		} catch (UnprocessableEntityException e) {
 			// 422 - UNPROCESSABLE ENTITY
@@ -123,7 +123,7 @@ public class UsuarioController {
 			// 200 - OK
 			usuario.setId(id);
 			Usuario.setParametros(new Usuario(), "id", "nome", "email", "dataNascimento", "permissao", "ativo");
-			return ResponseEntity.ok(usuarioService.editar(usuario, brUsuario));
+			return ResponseEntity.ok(usuarioService.atualizar(usuario, brUsuario));
 		} catch (UnprocessableEntityException e) {
 			// 422 - UNPROCESSABLE ENTITY
 			return ResponseEntity.unprocessableEntity().body(BindingResultUtils.toHashMap(brUsuario));

@@ -43,7 +43,7 @@ public abstract class AbstractJPA<T> implements DAO<T> {
 	 * Insere um registro na entidade representada pelo placeholder
 	 */
 	@Override
-	public void inserir(T obj) {
+	public void persistir(T obj) {
 		getSessao().persist(obj);
 	}
 	
@@ -51,7 +51,7 @@ public abstract class AbstractJPA<T> implements DAO<T> {
 	 * Edita um registro na entidade representada pelo placeholder
 	 */
 	@Override
-	public void alterar(T obj) {
+	public void atualizar(T obj) {
 		getSessao().update(obj);
 	}
 

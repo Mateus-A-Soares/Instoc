@@ -3,6 +3,7 @@ package br.com.lupus.models;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -75,14 +76,14 @@ public class TipoItem extends Model {
 	private String nome;
 
 	/** Usuário que cadastrou/está tentando cadastrar esse registro */
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Usuario cadastrante;
 
 	/**
 	 * Lista de tags que estão referenciadas por uma chave estrangeira ao id desse
 	 * objeto
 	 */
-	@OneToMany(mappedBy = "tipoItem", targetEntity = TipoItemTag.class)
+	@OneToMany(mappedBy = "tipoItem", targetEntity = TipoItemTag.class, fetch = FetchType.LAZY)
 	private List<TipoItemTag> tagsAnexadas;
 
 	// Getters & Setters
@@ -163,5 +164,10 @@ public class TipoItem extends Model {
 	 */
 	public void setTagsAnexadas(List<TipoItemTag> tagsAnexadas) {
 		this.tagsAnexadas = tagsAnexadas;
+	}
+
+	@Override
+	public String toString() {
+		return "TipoItem [id=" + id + ", nome=" + nome + "]";
 	}
 }

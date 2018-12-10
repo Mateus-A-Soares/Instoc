@@ -13,7 +13,7 @@ import br.com.lupus.exceptions.ValidationException;
 import br.com.lupus.models.Usuario;
 
 /**
- * 	Classe com os métodos auxiliares referentes ao CRUD de usuários
+ * Classe com os métodos auxiliares referentes ao CRUD de usuários
  * 
  * @author Mateus A.S
  */
@@ -23,15 +23,21 @@ public class UsuarioService {
 	private UsuarioDao usuarioDao;
 
 	/**
-	 * 	Método que valida se existe um usuário com email e senha iguais aos passados.
+	 * Método que valida se existe um usuário com email e senha iguais aos passados.
 	 * Válida se há algum erro de validação referente ao email e a senha, e se não,
 	 * procura na base de dados se o usuário existe
 	 * 
-	 * @param usuario objeto populado com o email e a senha procurados
-	 * @param brUsuario objeto populado com possíveis erros de validação
+	 * @param usuario
+	 *            objeto populado com o email e a senha procurados
+	 * @param brUsuario
+	 *            objeto populado com possíveis erros de validação
 	 * @return usuario procurado populado com todas as informações necessárias
-	 * @throws ValidationException exception disparada se há erros de validação em um dos dois campos (email ou senha) 
-	 * @throws EntityNotFound exception disparada se não existir usuário com o email e senha passados
+	 * @throws ValidationException
+	 *             exception disparada se há erros de validação em um dos dois
+	 *             campos (email ou senha)
+	 * @throws EntityNotFound
+	 *             exception disparada se não existir usuário com o email e senha
+	 *             passados
 	 */
 	public Usuario getEmailSenha(Usuario usuario, BindingResult brUsuario) throws ValidationException, EntityNotFound {
 
@@ -40,7 +46,7 @@ public class UsuarioService {
 			throw new ValidationException();
 		} else {
 
-			Usuario usuarioAutenticado = usuarioDao.getEmailSenha(usuario.getEmail(), usuario.getSenha());
+			Usuario usuarioAutenticado = usuarioDao.buscar(usuario.getEmail(), usuario.getSenha());
 			if (usuarioAutenticado == null) {
 
 				throw new EntityNotFound();
@@ -52,8 +58,10 @@ public class UsuarioService {
 	}
 
 	/**
-	 * 	Método que busca um usuário pelo seu ID
-	 * @param id número de identificação usado na procura
+	 * Método que busca um usuário pelo seu ID
+	 * 
+	 * @param id
+	 *            número de identificação usado na procura
 	 * @return usuário referente ao id
 	 * @throws EntityNotFound
 	 */
@@ -66,7 +74,7 @@ public class UsuarioService {
 	}
 
 	/**
-	 * 	Método que retorna todos os usuários cadastrados no sistema
+	 * Método que retorna todos os usuários cadastrados no sistema
 	 * 
 	 * @return lista de usuários cadastrados
 	 */
@@ -76,16 +84,21 @@ public class UsuarioService {
 	}
 
 	/**
-	 * 	Método que cadastra um usuário na base de dados.
-	 * 	Recebe um usuário, verifica se o email já foi cadastrado, se os campos estão nulos
-	 * e possíveis erros de validação.
-	 *  Caso não haja erros de validação, cadastra o usuário na base de dados. 
-	 * @param usuario usuário a ser cadastrado
-	 * @param brUsuario objeto populado com os possíveis erros de validação
-	 * @throws UnprocessableEntityException exception disparada quando há erros de validação
+	 * Método que cadastra um usuário na base de dados. Recebe um usuário, verifica
+	 * se o email já foi cadastrado, se os campos estão nulos e possíveis erros de
+	 * validação. Caso não haja erros de validação, cadastra o usuário na base de
+	 * dados.
+	 * 
+	 * @param usuario
+	 *            usuário a ser cadastrado
+	 * @param brUsuario
+	 *            objeto populado com os possíveis erros de validação
+	 * @throws UnprocessableEntityException
+	 *             exception disparada quando há erros de validação
 	 */
-	public void salvar(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
-		if (usuarioDao.getEmail(usuario.getEmail()) != null)
+	public void persistir(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
+		usuario.setAtivo(true);
+		if (usuarioDao.buscar(usuario.getEmail()) != null)
 			brUsuario.addError(new FieldError("usuario", "email", "endereço de email já cadastrado"));
 
 		if (usuario.getEmail() == null)
@@ -106,61 +119,67 @@ public class UsuarioService {
 		if (brUsuario.hasFieldErrors()) {
 			throw new UnprocessableEntityException();
 		} else {
-			usuarioDao.inserir(usuario);
+			usuarioDao.persistir(usuario);
 		}
 	}
-	
+
 	/**
-	 * 	Método que edita um usuário cadastrado na base de dados.
-	 * 	Recebe um usuário, verifica se o email já foi cadastrado e possíveis erros de validação.
-	 *	Caso existam campos nulos, popula o campo com o antigo valor.
-	 *  Caso não haja erros de validação, edita o usuário na base de dados. 
-	 * @param usuario usuário a ser editado
-	 * @param brUsuario objeto populado com os possíveis erros de validação
-	 * @throws UnprocessableEntityException exception disparada quando há erros de validação
+	 * Método que edita um usuário cadastrado na base de dados. Recebe um usuário,
+	 * verifica se o email já foi cadastrado e possíveis erros de validação. Caso
+	 * existam campos nulos, popula o campo com o antigo valor. Caso não haja erros
+	 * de validação, edita o usuário na base de dados.
+	 * 
+	 * @param usuario
+	 *            usuário a ser editado
+	 * @param brUsuario
+	 *            objeto populado com os possíveis erros de validação
+	 * @throws UnprocessableEntityException
+	 *             exception disparada quando há erros de validação
 	 */
-	public Usuario editar(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
-		Usuario u = usuarioDao.getEmail(usuario.getEmail());
-		if (u != null && u.getId() != usuario.getId()) {
+	public Usuario atualizar(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
+		Usuario usuarioAux = usuarioDao.buscar(usuario.getEmail());
+		if (usuarioAux != null && usuarioAux.getId() != usuario.getId()) {
 			brUsuario.addError(new FieldError("usuario", "email", "endereço de email já cadastrado"));
 		}
 		if (brUsuario.hasFieldErrors()) {
 			throw new UnprocessableEntityException();
 		} else {
-			u = usuarioDao.buscar(usuario.getId());
-			if (usuario.getAtivo() == null)
-				usuario.setAtivo(u.getAtivo());
-			if (usuario.getPermissao() == null)
-				usuario.setPermissao(u.getPermissao());
-			if (usuario.getDataNascimento() == null)
-				usuario.setDataNascimento(u.getDataNascimento());
-			if (usuario.getEmail() == null)
-				usuario.setEmail(u.getEmail());
-			if (usuario.getNome() == null)
-				usuario.setNome(u.getNome());
-			if (usuario.getSenha() == null)
-				usuario.setSenha(u.getSenha());
-			usuarioDao.alterar(usuario);
+			usuarioAux = usuarioDao.buscar(usuario.getId());
+			if (usuario.getAtivo() != null)
+				usuarioAux.setAtivo(usuario.getAtivo());
+			if (usuario.getPermissao() != null)
+				usuarioAux.setPermissao(usuario.getPermissao());
+			if (usuario.getDataNascimento() != null)
+				usuarioAux.setDataNascimento(usuario.getDataNascimento());
+			if (usuario.getEmail() != null)
+				usuarioAux.setEmail(usuario.getEmail());
+			if (usuario.getNome() != null)
+				usuarioAux.setNome(usuario.getNome());
+			if (usuario.getSenha() != null)
+				usuarioAux.setSenha(usuario.getSenha());
+			usuarioDao.atualizar(usuarioAux);
 		}
-		return usuario;
+		return usuarioAux;
 	}
 
 	/**
-	 * 	Método que desativa um usuário cadastrado na base de dados, ou seja,
-	 * define seu status ativo como falso
+	 * Método que desativa um usuário cadastrado na base de dados, ou seja, define
+	 * seu status ativo como falso
 	 * 
-	 * @param id id do usuário a ser desativado
+	 * @param id
+	 *            id do usuário a ser desativado
 	 * @return usuário desativado
-	 * @throws EntityNotFound exception disparada quando o id não corresponde a nenhum usuário
+	 * @throws EntityNotFound
+	 *             exception disparada quando o id não corresponde a nenhum usuário
 	 */
 	public Usuario desativar(Long id) throws EntityNotFound {
-		Usuario u = usuarioDao.buscar(id);
-		if (u == null) {
+		Usuario usuarioAntigo = usuarioDao.buscar(id);
+		if (usuarioAntigo == null) {
 			throw new EntityNotFound();
 		} else {
-			u.setAtivo(false);
-			usuarioDao.alterar(u);
-			return u;
+			usuarioAntigo.setAtivo(false);
+			usuarioDao.atualizar(usuarioAntigo);
+			return usuarioAntigo;
 		}
 	}
 }

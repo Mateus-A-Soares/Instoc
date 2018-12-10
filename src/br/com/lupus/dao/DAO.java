@@ -18,7 +18,7 @@ public interface DAO<T> {
 	public List<T> buscarTodos();
 
 	@Transactional
-	public void alterar(T obj);
+	public void atualizar(T obj);
 
 	@Transactional
 	public void deletar(Long id);
@@ -27,5 +27,5 @@ public interface DAO<T> {
 	public void deletar(T obj);
 
 	@Transactional
-	public void inserir(T obj);
+	public void persistir(T obj);
 }

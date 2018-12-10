@@ -2,6 +2,7 @@ package br.com.lupus.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -70,15 +71,15 @@ public class Item extends Model {
 	 * Tipo cadastrado que representa esse item. Registro com as
 	 * definições/descrições desse item.
 	 */
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	private TipoItem tipo;
 
 	/** Usuário que cadastrou/está tentando cadastrar esse item. */
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	private Usuario cadastrante;
 
 	/** Ambiente em que o item se encontra. */
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ambiente_atual_id")
 	private Ambiente ambienteAtual;
 
@@ -160,5 +161,11 @@ public class Item extends Model {
 	 */
 	public void setAmbienteAtual(Ambiente ambienteAtual) {
 		this.ambienteAtual = ambienteAtual;
+	}
+
+	@Override
+	public String toString() {
+		return "Item [id=" + id + ", tipo=" + tipo + ", cadastrante=" + cadastrante + ", ambienteAtual=" + ambienteAtual
+				+ "]";
 	}
 }

@@ -47,7 +47,7 @@ public class AmbienteController {
 		try {
 			// 200 - OK
 			Ambiente.setParametros(new Ambiente(), "id", "descricao");
-			return ResponseEntity.ok(ambienteService.listarAmbientes());
+			return ResponseEntity.ok(ambienteService.buscarAmbientes());
 		} catch (Exception e) {
 			// 500 - INTERNAL SERVER ERROR
 			e.printStackTrace();
@@ -62,17 +62,18 @@ public class AmbienteController {
 	 * 
 	 * @param id
 	 *            id presente na URL para procura do ambiente
-	 * @return ResponseEntity populado com o ambiente solicitado
+	 * @return ResponseEntity populado com o ambiente solicitado com status 200
+	 *         (OK), 404 (NOT FOUND) ou 500 (INTERNAL SERVER ERROR)
 	 */
 	@GetMapping("/{id}")
-	public ResponseEntity<Object> pegarAmbiente(@PathVariable Long id) {
+	public ResponseEntity<Object> buscarAmbiente(@PathVariable Long id) {
 		try {
 			// 200 - OK
 			Ambiente.setParametros(new Ambiente(), "id", "descricao", "cadastrante", "itens");
 			Usuario.setParametros(new Usuario(), "id", "nome", "ativo");
 			Item.setParametros(new Item(), "id", "tipo");
 			TipoItem.setParametros(new TipoItem(), "nome");
-			return ResponseEntity.ok(ambienteService.pegarAmbiente(id));
+			return ResponseEntity.ok(ambienteService.buscarAmbiente(id));
 		} catch (EntityNotFound e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
@@ -92,13 +93,14 @@ public class AmbienteController {
 	 *            ambiente a ser cadastrado
 	 * @param brAmbiente
 	 *            objeto populado com os possíveis erros de validação
-	 * @return ResponseEntity com status 202
+	 * @return ResponseEntity populado com status 202 (OK - NO CONTENT), 422
+	 *         (UNPROCESSABLE ENTITY) ou 500 (INTERNAL SERVER ERROR)
 	 */
 	@PostMapping
 	public ResponseEntity<Object> cadastrarAmbiente(@Valid @RequestBody Ambiente ambiente, BindingResult brAmbiente) {
 		try {
 			// 202 - OK / NO CONTENT
-			ambienteService.cadastrarAmbiente(ambiente, brAmbiente);
+			ambienteService.persistirAmbiente(ambiente, brAmbiente);
 			return ResponseEntity.noContent().build();
 		} catch (UnprocessableEntityException e) {
 			// 422 - UNPROCESSABLE ENTITY
@@ -120,9 +122,9 @@ public class AmbienteController {
 	 *            id do ambiente a ser editado
 	 * @param ambiente
 	 *            objeto ambiente com os valores a serem alterados
-	 * @return ResponseEntity populado com o ambiente editado com status 202 (OK - NO CONTENT),
-	 *         404 (NOT FOUND), 422 (UNPROCESSABLE ENTITY) ou 500 (INTERNAL SERVER
-	 *         ERROR)
+	 * @return ResponseEntity populado com o ambiente editado com status 202 (OK -
+	 *         NO CONTENT), 404 (NOT FOUND), 422 (UNPROCESSABLE ENTITY) ou 500
+	 *         (INTERNAL SERVER ERROR)
 	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> editarAmbiente(@PathVariable Long id, @Valid @RequestBody Ambiente ambiente,
@@ -130,7 +132,9 @@ public class AmbienteController {
 		try {
 			// 200 - OK
 			ambiente.setId(id);
-			return ResponseEntity.ok(ambienteService.editar(ambiente, brAmbiente));
+			Ambiente.setParametros(new Ambiente(), "id", "descricao", "cadastrante");
+			Usuario.setParametros(new Usuario(), "id", "nome", "email", "permissao", "ativo");
+			return ResponseEntity.ok(ambienteService.atualizar(ambiente, brAmbiente));
 		} catch (EntityNotFound e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
@@ -146,9 +150,10 @@ public class AmbienteController {
 
 	/**
 	 * End-point de URL /api/v1/ambiente/{id do ambiente a ser deletado} - Recebe na
-	 * URL o id de um ambiente a ser excluido, retornando o status 202 se tudo
-	 * ocorrer bem, 404 se o ambiente referente não existir, 422 se existirem itens
-	 * apontando para este ambiente e 500 para outros possíveis erros não tratados
+	 * URL o id de um ambiente a ser excluido, retornando no ResponseEntity o status
+	 * 202 se tudo ocorrer bem, 404 se o ambiente referente não existir, 422 se
+	 * existirem itens apontando para este ambiente e 500 para outros possíveis
+	 * erros não tratados
 	 * 
 	 * @param id
 	 *            id do ambiente a ser excluido
@@ -156,7 +161,7 @@ public class AmbienteController {
 	 *         (UNPROCESSABLE ENTITY) ou 500 (INTERNAL SERVER ERROR)
 	 */
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> excluirAmbiente(@PathVariable Long id) {
+	public ResponseEntity<Object> deletarAmbiente(@PathVariable Long id) {
 		try {
 			// 202 - NO CONTENT
 			ambienteService.deletarAmbiente(id);
