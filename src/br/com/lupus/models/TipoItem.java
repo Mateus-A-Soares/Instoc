@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
+import javax.persistence.CascadeType;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import br.com.lupus.models.serializer.Model;
@@ -83,8 +83,15 @@ public class TipoItem extends Model {
 	 * Lista de tags que estão referenciadas por uma chave estrangeira ao id desse
 	 * objeto
 	 */
-	@OneToMany(mappedBy = "tipoItem", targetEntity = TipoItemTag.class, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "tipoItem", targetEntity = TipoItemTag.class, fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<TipoItemTag> tagsAnexadas;
+	
+	/**
+	 * Lista de itens que estão referenciadas por uma chave estrangeira ao id desse
+	 * objeto
+	 */
+	@OneToMany(mappedBy = "tipo", targetEntity = Item.class, fetch = FetchType.LAZY)
+	private List<Item> itensAnexados;
 
 	// Getters & Setters
 
@@ -166,6 +173,25 @@ public class TipoItem extends Model {
 		this.tagsAnexadas = tagsAnexadas;
 	}
 
+	/**
+	 * Método que retorna uma lista de itens que estão referenciadas ao id desse
+	 * objeto
+	 * 
+	 * @return lista de itens referenciadas ao id desse objeto
+	 */
+	public List<Item> getItensAnexados() {
+		return itensAnexados;
+	}
+	/**
+	 * Define os itens anexados a esse id
+	 * 
+	 * @param itensAnexados
+	 *            lista de itens a ser anexado a esse objeto
+	 */
+	public void setItensAnexados(List<Item> itensAnexados) {
+		this.itensAnexados = itensAnexados;
+	}
+	
 	@Override
 	public String toString() {
 		return "TipoItem [id=" + id + ", nome=" + nome + "]";

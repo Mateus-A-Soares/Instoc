@@ -1,6 +1,5 @@
 package br.com.lupus.models.serializer;
 
-
 import java.util.HashMap;
 
 public abstract class Model {

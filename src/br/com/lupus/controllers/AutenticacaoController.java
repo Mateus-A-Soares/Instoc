@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.lupus.exceptions.EntityNotFound;
-import br.com.lupus.exceptions.ValidationException;
+import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Usuario;
 import br.com.lupus.services.UsuarioService;
 import br.com.lupus.utils.BindingResultUtils;
@@ -52,7 +52,7 @@ public class AutenticacaoController {
 			Map<String, String> tokenMap = new HashMap<>();
 			tokenMap.put("token", JwtUtils.getToken(authUser));
 			return ResponseEntity.ok(tokenMap);
-		} catch (ValidationException e) {
+		} catch (UnprocessableEntityException e) {
 			// 422 - UNPROCESSABLE  ENTITY
 			List<String> fields = new ArrayList<>();
 			fields.add("email");

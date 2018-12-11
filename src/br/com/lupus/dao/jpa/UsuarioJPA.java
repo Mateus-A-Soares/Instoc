@@ -15,9 +15,6 @@ import br.com.lupus.models.Usuario;
 @Repository("usuarioDao")
 public class UsuarioJPA extends AbstractJPA<Usuario> implements UsuarioDao{
 	
-	/**
-	 * 	Retorna o nome da entidade que o usuario representa para a classe pai
-	 */
 	@Override
 	public String getNomeEntidade() {
 		return "Usuario";

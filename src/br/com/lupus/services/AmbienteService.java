@@ -88,14 +88,18 @@ public class AmbienteService {
 	 * @param brAmbiente
 	 *            objeto populado com os possíveis erros de validação
 	 * @return objeto ambiente populado com o registro que foi atualizado
+	 * @throws EntityNotFound
+	 *             disparada se o registro a ser editado não for encontrado
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver erros de validação
-	 * @throws EntityNotFound
+	 * 
 	 */
 	@Transactional(value = TxType.REQUIRED)
 	public Ambiente atualizar(Ambiente ambiente, BindingResult brAmbiente)
-			throws UnprocessableEntityException, EntityNotFound {
+			throws EntityNotFound, UnprocessableEntityException {
 		Ambiente ambienteAntigo = ambienteDao.buscar(ambiente.getId());
+		if (ambienteAntigo == null)
+			throw new EntityNotFound();
 		if (brAmbiente.hasFieldErrors())
 			throw new UnprocessableEntityException();
 		if (ambiente.getDescricao() != null)
@@ -112,12 +116,12 @@ public class AmbienteService {
 	 * existir e não houver chaves estrangeiras efetua a exclusão
 	 * 
 	 * @param id
-	 *            id do item a ser excluido
+	 *            id do ambiente a ser excluido
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver chaves estrangeiras apontando para este
 	 *             ambiente
 	 * @throws EntityNotFound
-	 *             disparada se não existir ambiente referente ao id passado
+	 *             disparada se o registro a ser excluido não for encontrado
 	 */
 	public void deletarAmbiente(Long id) throws UnprocessableEntityException, EntityNotFound {
 		Ambiente ambiente = ambienteDao.buscar(id);

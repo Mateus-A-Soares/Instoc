@@ -21,6 +21,11 @@ import br.com.lupus.models.Item;
 import br.com.lupus.models.TipoItem;
 import br.com.lupus.models.Usuario;
 
+/**
+ * Classe com os métodos auxiliares referentes ao CRUD de itens
+ * 
+ * @author Mateus A.S
+ */
 @Service
 public class ItemService {
 
@@ -33,10 +38,24 @@ public class ItemService {
 	@Autowired
 	private AmbienteDao ambienteDao;
 
+	/**
+	 * Método que retorna uma lista com todos os itens cadastrados na base de dados
+	 * 
+	 * @return lista de itens cadastrados
+	 */
 	public List<Item> buscarItens() {
 		return itemDao.buscarTodos();
 	}
 
+	/**
+	 * Método que retorna um item cadastrado na base de dados através do seu id
+	 * 
+	 * @param id
+	 *            id do item procurado
+	 * @return objeto item populado
+	 * @throws EntityNotFound
+	 *             disparada quando não existe item referenciado ao id passado
+	 */
 	@Transactional(value = TxType.REQUIRED)
 	public Item buscar(Long id) throws EntityNotFound {
 		Item item = itemDao.buscar(id);
@@ -47,6 +66,18 @@ public class ItemService {
 		return item;
 	}
 
+	/**
+	 * Método que persiste um item na base de dados. Recebe um objeto item populado,
+	 * verifica se há erros de validação, se não houver define o usuário logado como
+	 * o cadastrante do item e efetua a persistência
+	 * 
+	 * @param item
+	 *            objeto item populado
+	 * @param brItem
+	 *            objeto populado com os possíveis erros de validação
+	 * @throws UnprocessableEntityException
+	 *             disparada se houver erros de validação
+	 */
 	public void cadastrar(Item item, BindingResult brItem) throws UnprocessableEntityException {
 		if (item.getAmbienteAtual().getId() == null)
 			brItem.addError(new FieldError("item", "ambienteAtual", "Id do ambiente não definido"));
@@ -66,6 +97,21 @@ public class ItemService {
 		itemDao.persistir(item);
 	}
 
+	/**
+	 * Método que atualiza um item cadastrado na base de dados. Recebe um objeto
+	 * item populado, verifica se há erros de validação, se não houver, efetua a
+	 * atualização
+	 * 
+	 * @param item
+	 *            objeto populado com os novos valores a serem atualizados
+	 * @param brItem
+	 *            objeto populado com os possíveis erros de validação
+	 * @return objeto item populado com o registro que foi atualizado
+	 * @throws UnprocessableEntityException
+	 *             disparada se houver erros de validação
+	 * @throws EntityNotFound
+	 *             disparada se o registro a ser editado não for encontrado
+	 */
 	@Transactional(value = TxType.REQUIRED)
 	public Item atualizar(@Valid Item item, BindingResult brItem) throws UnprocessableEntityException, EntityNotFound {
 		Item itemAntigo = itemDao.buscar(item.getId());
@@ -73,7 +119,7 @@ public class ItemService {
 			throw new EntityNotFound();
 		if (item.getTipo() != null && item.getTipo().getId() != null) {
 			TipoItem tipoItem = tipoItemDao.buscar(item.getTipo().getId());
-			if(tipoItem == null)
+			if (tipoItem == null)
 				brItem.addError(new FieldError("item", "tipo", "Tipo não existente"));
 			else
 				itemAntigo.setTipo(tipoItem);
@@ -85,6 +131,16 @@ public class ItemService {
 		return itemAntigo;
 	}
 
+	/**
+	 * Método que exclui fisicamente um item cadastrado na base de dados. Verifica
+	 * se existe registro de um item referente ao id passado, se o ambiente
+	 * existir efetua a exclusão
+	 * 
+	 * @param id
+	 *            id do item a ser excluido
+	 * @throws EntityNotFound
+	 *             disparada se o registro a ser excluido não for encontrado
+	 */
 	public void deletarItem(Long id) throws EntityNotFound {
 		Item item = itemDao.buscar(id);
 		if (item == null)

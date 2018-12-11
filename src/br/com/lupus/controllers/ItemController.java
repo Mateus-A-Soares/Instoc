@@ -44,10 +44,12 @@ public class ItemController {
 	@GetMapping
 	private ResponseEntity<Object> listarItens() {
 		try {
+			// 200 - OK
 			Item.setParametros(new Item(), "id", "tipo");
 			TipoItem.setParametros(new TipoItem(), "id", "nome");
 			return ResponseEntity.ok(itemService.buscarItens());
 		} catch (Exception e) {
+			// 500 - INTERNAL SERVER ERROR
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -64,14 +66,17 @@ public class ItemController {
 	@GetMapping("/{id}")
 	private ResponseEntity<Object> buscarItem(@PathVariable Long id) {
 		try {
+			// 200 - OK
 			Item.setParametros(new Item(), "id", "tipo", "cadastrante", "ambienteAtual");
 			TipoItem.setParametros(new TipoItem(), "id", "nome");
 			Usuario.setParametros(new Usuario(), "id", "nome", "email", "ativo");
 			Ambiente.setParametros(new Ambiente(), "id", "descricao");
 			return ResponseEntity.ok(itemService.buscar(id));
 		} catch (EntityNotFound e) {
+			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
+			// 500 - INTERNAL SERVER ERROR
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -81,8 +86,8 @@ public class ItemController {
 	 * representando um item a ser cadastrado, o end-point valida ele e tenta
 	 * persistir, se o processo ocorrer com sucesso retorna um status 204
 	 * 
-	 * @param ambiente
-	 *            ambiente a ser cadastrado
+	 * @param item
+	 *            item a ser cadastrado
 	 * @param brItem
 	 *            objeto populado com os possíveis erros de validação
 	 * @return ResponseEntity com status 202
@@ -90,15 +95,32 @@ public class ItemController {
 	@PostMapping
 	public ResponseEntity<Object> cadastrarItem(@Valid @RequestBody Item item, BindingResult brItem) {
 		try {
+			// 202 - OK / NO CONTENT
 			itemService.cadastrar(item, brItem);
 			return ResponseEntity.noContent().build();
 		} catch (UnprocessableEntityException e) {
+			// 422 - UNPROCESSABLE ENTITY
 			return ResponseEntity.unprocessableEntity().body(BindingResultUtils.toHashMap(brItem));
 		} catch (Exception e) {
+			// 500 - INTERNAL SERVER ERROR
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	/**
+	 * End-point de URL /api/v1/item/{id do item a ser editado} - Recebe no
+	 * corpo da requisição um objeto JSON representando um item a ser editado, o
+	 * end-point valida ele e tenta editar no id informado na url da requisição, se
+	 * o processo ocorrer com sucesso retorna o item editado
+	 * 
+	 * @param id
+	 *            id do item a ser editado
+	 * @param item
+	 *            objeto item com os valores a serem alterados
+	 * @return ResponseEntity populado com o item editado com status 202 (OK -
+	 *         NO CONTENT), 404 (NOT FOUND), 422 (UNPROCESSABLE ENTITY) ou 500
+	 *         (INTERNAL SERVER ERROR)
+	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> editarItem(@PathVariable Long id, @Valid @RequestBody Item item,
 			BindingResult brItem) {
@@ -123,14 +145,28 @@ public class ItemController {
 		}
 	}
 	
+	/**
+	 * End-point de URL /api/v1/item/{id do item a ser deletado} - Recebe na URL o
+	 * id de um item a ser excluido, retornando no ResponseEntity o status 202 se
+	 * tudo ocorrer bem, 404 se o item referente não existir e 500 para outros
+	 * possíveis erros não tratados
+	 * 
+	 * @param id
+	 *            id do item a ser excluido
+	 * @return ResponseEntity com status 202 (OK - NO CONTENT), 404 (NOT FOUND), 422
+	 *         (UNPROCESSABLE ENTITY) ou 500 (INTERNAL SERVER ERROR)
+	 */
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> deletarItem(@PathVariable Long id){
 		try {
+			// 202 - OK / NO CONTENT
 			itemService.deletarItem(id);
 			return ResponseEntity.noContent().build();
 		} catch (EntityNotFound e) {
+			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
+			// 500 - INTERNAL SERVER ERROR
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

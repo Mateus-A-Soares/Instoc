@@ -82,7 +82,7 @@ public class TipoItemTag extends Model {
 	 * String referente ao tipo de dado que o valor da tag representa (como data,
 	 * número, etc). Tamanho máximo de 50 caracteres.
 	 */
-	@Column(unique = false, nullable = false, length = 50)
+	@Column(unique = false, nullable = true, length = 50)
 	private String tipo;
 
 	/** TipoItem a qual a tag pertence. */

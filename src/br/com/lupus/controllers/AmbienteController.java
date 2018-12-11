@@ -122,6 +122,9 @@ public class AmbienteController {
 	 *            id do ambiente a ser editado
 	 * @param ambiente
 	 *            objeto ambiente com os valores a serem alterados
+	 * @param brAmbiente
+	 *            objeto populado com os possíveis erros de validação
+	 * 
 	 * @return ResponseEntity populado com o ambiente editado com status 202 (OK -
 	 *         NO CONTENT), 404 (NOT FOUND), 422 (UNPROCESSABLE ENTITY) ou 500
 	 *         (INTERNAL SERVER ERROR)

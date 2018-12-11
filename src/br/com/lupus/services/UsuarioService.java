@@ -1,6 +1,7 @@
 package br.com.lupus.services;
 
 import java.util.List;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -9,7 +10,6 @@ import org.springframework.validation.FieldError;
 import br.com.lupus.dao.UsuarioDao;
 import br.com.lupus.exceptions.EntityNotFound;
 import br.com.lupus.exceptions.UnprocessableEntityException;
-import br.com.lupus.exceptions.ValidationException;
 import br.com.lupus.models.Usuario;
 
 /**
@@ -39,11 +39,11 @@ public class UsuarioService {
 	 *             exception disparada se não existir usuário com o email e senha
 	 *             passados
 	 */
-	public Usuario getEmailSenha(Usuario usuario, BindingResult brUsuario) throws ValidationException, EntityNotFound {
+	public Usuario getEmailSenha(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException, EntityNotFound {
 
 		if (brUsuario.hasFieldErrors("email") || brUsuario.hasFieldErrors("senha")) {
 
-			throw new ValidationException();
+			throw new UnprocessableEntityException();
 		} else {
 
 			Usuario usuarioAutenticado = usuarioDao.buscar(usuario.getEmail(), usuario.getSenha());
@@ -136,30 +136,32 @@ public class UsuarioService {
 	 * @throws UnprocessableEntityException
 	 *             exception disparada quando há erros de validação
 	 */
-	public Usuario atualizar(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException {
-		Usuario usuarioAux = usuarioDao.buscar(usuario.getEmail());
-		if (usuarioAux != null && usuarioAux.getId() != usuario.getId()) {
+	public Usuario atualizar(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException, EntityNotFoundException {
+		Usuario usuarioAntigo = usuarioDao.buscar(usuario.getEmail());
+		if (usuarioAntigo != null && usuarioAntigo.getId() != usuario.getId()) {
 			brUsuario.addError(new FieldError("usuario", "email", "endereço de email já cadastrado"));
 		}
 		if (brUsuario.hasFieldErrors()) {
 			throw new UnprocessableEntityException();
 		} else {
-			usuarioAux = usuarioDao.buscar(usuario.getId());
+			usuarioAntigo = usuarioDao.buscar(usuario.getId());
+			if (usuarioAntigo == null)
+				throw new EntityNotFoundException();
 			if (usuario.getAtivo() != null)
-				usuarioAux.setAtivo(usuario.getAtivo());
+				usuarioAntigo.setAtivo(usuario.getAtivo());
 			if (usuario.getPermissao() != null)
-				usuarioAux.setPermissao(usuario.getPermissao());
+				usuarioAntigo.setPermissao(usuario.getPermissao());
 			if (usuario.getDataNascimento() != null)
-				usuarioAux.setDataNascimento(usuario.getDataNascimento());
+				usuarioAntigo.setDataNascimento(usuario.getDataNascimento());
 			if (usuario.getEmail() != null)
-				usuarioAux.setEmail(usuario.getEmail());
+				usuarioAntigo.setEmail(usuario.getEmail());
 			if (usuario.getNome() != null)
-				usuarioAux.setNome(usuario.getNome());
+				usuarioAntigo.setNome(usuario.getNome());
 			if (usuario.getSenha() != null)
-				usuarioAux.setSenha(usuario.getSenha());
-			usuarioDao.atualizar(usuarioAux);
+				usuarioAntigo.setSenha(usuario.getSenha());
+			usuarioDao.atualizar(usuarioAntigo);
 		}
-		return usuarioAux;
+		return usuarioAntigo;
 	}
 
 	/**
