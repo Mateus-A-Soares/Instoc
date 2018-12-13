@@ -15,7 +15,6 @@ public class TipoItemJpa extends AbstractJPA<TipoItem> implements TipoItemDao {
 
 	@Override
 	public String getNomeEntidade() {
-		// TODO Auto-generated method stub
 		return "TipoItem";
 	}
 

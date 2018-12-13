@@ -8,7 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import br.com.lupus.models.serializer.Model;
@@ -72,6 +74,7 @@ public class TipoItemTag extends Model {
 
 	/** String referente ao nome da tag. Tamanho máximo de 50 caracteres. */
 	@Column(unique = false, nullable = false, length = 50)
+	@NotNull
 	private String cabecalho;
 
 	/** String referente ao valor da tag. Tamanho máximo de 50 caracteres. */
@@ -83,6 +86,7 @@ public class TipoItemTag extends Model {
 	 * número, etc). Tamanho máximo de 50 caracteres.
 	 */
 	@Column(unique = false, nullable = true, length = 50)
+	@JsonIgnore
 	private String tipo;
 
 	/** TipoItem a qual a tag pertence. */

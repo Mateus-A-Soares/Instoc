@@ -65,7 +65,7 @@ public class Movimentacao extends Model {
 		this.movimentador = movimentador;
 	}
 
-	// Váriaveis
+	// Parâmetros
 
 	/**
 	 * Identificação dos diferentes registros de movimentações. Valor gerado

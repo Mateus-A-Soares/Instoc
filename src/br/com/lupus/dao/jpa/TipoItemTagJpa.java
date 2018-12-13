@@ -15,7 +15,6 @@ public class TipoItemTagJpa extends AbstractJPA<TipoItemTag> implements TipoItem
 
 	@Override
 	public String getNomeEntidade() {
-		// TODO Auto-generated method stub
 		return "tipoItemTag";
 	}
 }

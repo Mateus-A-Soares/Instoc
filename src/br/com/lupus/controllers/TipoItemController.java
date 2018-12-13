@@ -1,6 +1,7 @@
 package br.com.lupus.controllers;
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +27,20 @@ import br.com.lupus.services.TipoItemService;
 import br.com.lupus.utils.BindingResultUtils;
 
 /**
- * Controller com os end-points relacionados ao CRUD dos tipos dos itens no sistema
+ * Controller com os end-points relacionados ao CRUD dos tipos dos itens no
+ * sistema
  * 
  * @author Mateus A.S
  */
 @RestController
-@RequestMapping("/api/v1/tipoitem")
+@RequestMapping("/api/v1/item/tipos")
 public class TipoItemController {
 
 	@Autowired
 	private TipoItemService tipoItemService;
 
 	/**
-	 * End-point de URL /api/v1/tipoitem - Retorna ao cliente que fez a requisição
+	 * End-point de URL /api/v1/item/tipos - Retorna ao cliente que fez a requisição
 	 * um array de objetos JSON representando os tipo-itens cadastrados no sistema
 	 * 
 	 * @return ResponseEntity populado com os tipo-itens cadastrados no sistema
@@ -54,7 +56,7 @@ public class TipoItemController {
 	}
 
 	/**
-	 * End-point de URL /api/v1/tipoitem/{id do tipo-item procurado} - Retorna ao
+	 * End-point de URL /api/v1/item/tipos/{id do tipo-item procurado} - Retorna ao
 	 * cliente que fez a requisição um objeto JSON representando o tipo-item
 	 * solicitado
 	 * 
@@ -79,9 +81,10 @@ public class TipoItemController {
 	}
 
 	/**
-	 * End-point de URL /api/v1/tipoitem - Recebe um objeto JSON no corpo da
-	 * requisição representando um tipo-item a ser cadastrado, o end-point valida ele
-	 * e tenta persistir, se o processo ocorrer com sucesso retorna um status 204
+	 * End-point de URL /api/v1/item/tipos - Recebe um objeto JSON no corpo da
+	 * requisição representando um tipo-item a ser cadastrado, o end-point valida
+	 * ele e tenta persistir, se o processo ocorrer com sucesso retorna um status
+	 * 204
 	 * 
 	 * @param tipoitem
 	 *            tipo-item a ser cadastrado
@@ -101,12 +104,12 @@ public class TipoItemController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	/**
-	 * End-point de URL /api/v1/tipoitem/{id do tipo-item a ser editado} - Recebe no
-	 * corpo da requisição um objeto JSON representando um tipo-item a ser editado, o
-	 * end-point valida ele e tenta editar no id informado na url da requisição, se
-	 * o processo ocorrer com sucesso retorna o tipo-item editado
+	 * End-point de URL /api/v1/item/tipos/{id do tipo-item a ser editado} - Recebe
+	 * no corpo da requisição um objeto JSON representando um tipo-item a ser
+	 * editado, o end-point valida ele e tenta editar no id informado na url da
+	 * requisição, se o processo ocorrer com sucesso retorna o tipo-item editado
 	 * 
 	 * @param id
 	 *            id do tipo-item a ser editado
@@ -119,7 +122,8 @@ public class TipoItemController {
 	 *         (INTERNAL SERVER ERROR)
 	 */
 	@PutMapping("/{id}")
-	private ResponseEntity<Object> editarTipo(@PathVariable Long id, @Valid @RequestBody TipoItem tipoItem, BindingResult brTipo) {
+	private ResponseEntity<Object> editarTipo(@PathVariable Long id, @Valid @RequestBody TipoItem tipoItem,
+			BindingResult brTipo) {
 		try {
 			tipoItem.setId(id);
 			return ResponseEntity.ok(tipoItemService.editarTipo(tipoItem, brTipo));
@@ -129,12 +133,12 @@ public class TipoItemController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	/**
-	 * End-point de URL /api/v1/tipoitem/{id do tipo-item a ser deletado} - Recebe na
-	 * URL o id de um tipo-item a ser excluido, retornando no ResponseEntity o status
-	 * 202 se tudo ocorrer bem, 404 se o tipo-item referente não existir, 422 se
-	 * existirem itens apontando para este tipo-item e 500 para outros possíveis
+	 * End-point de URL /api/v1/item/tipos/{id do tipo-item a ser deletado} - Recebe
+	 * na URL o id de um tipo-item a ser excluido, retornando no ResponseEntity o
+	 * status 202 se tudo ocorrer bem, 404 se o tipo-item referente não existir, 422
+	 * se existirem itens apontando para este tipo-item e 500 para outros possíveis
 	 * erros não tratados
 	 * 
 	 * @param id
@@ -143,7 +147,7 @@ public class TipoItemController {
 	 *         (UNPROCESSABLE ENTITY) ou 500 (INTERNAL SERVER ERROR)
 	 */
 	@DeleteMapping("/{id}")
-	private ResponseEntity<Object> deletarTipo(@PathVariable Long id){
+	private ResponseEntity<Object> deletarTipo(@PathVariable Long id) {
 		try {
 			tipoItemService.deletarTipo(id);
 			return ResponseEntity.noContent().build();
@@ -153,6 +157,57 @@ public class TipoItemController {
 			HashMap<String, String> hashMap = new HashMap<>();
 			hashMap.put("itens", "Edite os itens referenciados a esse tipo-item antes de exclui-lo");
 			return ResponseEntity.unprocessableEntity().body(hashMap);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * End-point de URL /api/v1/item/tipos/{id do tipo-item referente a tag}/tag -
+	 * Recebe na URL o id de um tipo-item a ser adicionado a tag presente no body,
+	 * se a tag for válida, insere a tag apontando para o tipo-item referente ao id
+	 * passado. Retorna um ResponseEntity com status 202 se tudo ocorrer bem, 404 se
+	 * o tipo-item referente não existir, 422 se hover erros de validação na tag e
+	 * 500 para outros possíveis erros não tratados
+	 * 
+	 * @param id
+	 *            id do tipo-item referente a tag
+	 * @return ResponseEntity com status 202 (OK - NO CONTENT), 404 (NOT FOUND), 422
+	 *         (UNPROCESSABLE ENTITY) ou 500 (INTERNAL SERVER ERROR)
+	 */
+	@PostMapping("/{id}/tag")
+	private ResponseEntity<Object> adicionarTag(@PathVariable Long id, @RequestBody @Valid TipoItemTag tag,
+			BindingResult brTag) {
+		try {
+			tipoItemService.persistirTag(id, tag, brTag);
+			return ResponseEntity.noContent().build();
+		} catch (EntityNotFound e) {
+			return ResponseEntity.notFound().build();
+		} catch (UnprocessableEntityException e) {
+			return ResponseEntity.unprocessableEntity().body(BindingResultUtils.toHashMap(brTag));
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * End-point de URL /api/v1/item/tipos/{id do tipo-item referente as tags}/tags
+	 * - Recebe na URL o id de um tipo-item a ser adicionado as tags presente no
+	 * body, percorre todas as tags, persistindo somente as válidas. Retorna um
+	 * ResponseEntity com status 202 se tudo ocorrer bem, 404 se o tipo-item
+	 * referente não existir e 500 para outros possíveis erros não tratado
+	 * 
+	 * @param id
+	 *            id do tipo-item referente a tag
+	 * @return ResponseEntity com status 202 (OK - NO CONTENT), 404 (NOT FOUND) ou 500 (INTERNAL SERVER ERROR)
+	 */
+	@PostMapping("/{id}/tags")
+	private ResponseEntity<Object> adicionarTags(@PathVariable Long id, @RequestBody List<TipoItemTag> tags) {
+		try {
+			tipoItemService.persistirTags(id, tags);
+			return ResponseEntity.noContent().build();
+		} catch (EntityNotFound e) {
+			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

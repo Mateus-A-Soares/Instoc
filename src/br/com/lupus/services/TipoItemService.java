@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import br.com.lupus.dao.TipoItemDao;
+import br.com.lupus.dao.TipoItemTagDao;
 import br.com.lupus.exceptions.EntityNotFound;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.TipoItem;
@@ -30,6 +31,9 @@ public class TipoItemService {
 
 	@Autowired
 	private TipoItemDao tipoItemDao;
+
+	@Autowired
+	private TipoItemTagDao tagDao;
 
 	/**
 	 * Método que retorna uma lista com todos os tipos-itens cadastrados na base de
@@ -128,6 +132,61 @@ public class TipoItemService {
 		Hibernate.initialize(tipoItemAntigo.getItensAnexados());
 		Hibernate.initialize(tipoItemAntigo.getCadastrante());
 		return tipoItemAntigo;
+	}
+
+	/**
+	 * Método que persiste uma tag na base de dados. Recebe um objeto TipoItemTag
+	 * populado, verifica se o TipoItem referenciado existe, e se existir verifica
+	 * possíveis erros de validação, se não hover erros efetua a persistência
+	 * 
+	 * @param id
+	 *            id do TipoItem referente a tag
+	 * @param tag
+	 *            objeto tag populado
+	 * @param brTag
+	 *            objeto populado com os possíveis erros de validação
+	 * @throws EntityNotFound
+	 *             dispara se não existir registro de TipoItem referente ao id
+	 *             passado
+	 * @throws UnprocessableEntityException
+	 *             dispara se hover erros de validação
+	 */
+	public void persistirTag(Long id, TipoItemTag tag, BindingResult brTag)
+			throws EntityNotFound, UnprocessableEntityException {
+		TipoItem tipoItem = tipoItemDao.buscar(id);
+		if (tipoItem == null)
+			throw new EntityNotFound();
+		if (brTag.hasFieldErrors())
+			throw new UnprocessableEntityException();
+		tag.setTipoItem(tipoItem);
+		tagDao.persistir(tag);
+	}
+
+	/**
+	 * Método que persiste uma lista de tags na base de dados. Recebe uma lista de objetos TipoItemTag
+	 * populados, verifica se o TipoItem referenciado existe, se existir percorre a lista persistindo
+	 * todas quais não contém erros de validação.
+	 * 
+	 * @param id
+	 *            id do TipoItem referente a lista de tags
+	 * @param tags
+	 *            lista de objetos tag populados
+	 * @throws EntityNotFound
+	 *             dispara se não existir registro de TipoItem referente ao id
+	 *             passado
+	 */
+	public void persistirTags(Long id, List<TipoItemTag> tags) throws EntityNotFound {
+		TipoItem tipoItem = tipoItemDao.buscar(id);
+		if (tipoItem == null)
+			throw new EntityNotFound();
+
+		for (int i = 0; i < tags.size(); i++) {
+			TipoItemTag tag = tags.get(i);
+			if (tag.getCabecalho() != null) {
+				tag.setTipoItem(tipoItem);
+				tagDao.persistir(tag);
+			}
+		}
 	}
 
 	/**
