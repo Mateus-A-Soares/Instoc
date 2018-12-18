@@ -1,5 +1,6 @@
 package br.com.lupus.models;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
@@ -64,7 +66,6 @@ public class Usuario extends Model implements Authentication {
 	 *            parâmetro permissão do objeto
 	 */
 	public Usuario(Long id, String nome, String email, Date dataNascimento, Permissao permissao, String senha, boolean ativo) {
-
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
@@ -87,7 +88,7 @@ public class Usuario extends Model implements Authentication {
 
 	/** String que representa o nome do usuário */
 	@Column(unique = false, nullable = false, length = 75)
-	@Size(min = 3, max = 40)
+	@Size(min = 3, max = 75)
 	private String nome;
 
 	/** String que representa o email do usuário */
@@ -107,14 +108,17 @@ public class Usuario extends Model implements Authentication {
 	private Permissao permissao;
 
 	/** Chave de acesso do usuário */
-	@Column(unique = false, nullable = false, length = 20)
 	@Size(min = 3, max = 20)
+	@Transient
 	private String senha;
-
+	
+	@Column(nullable = false, unique = false, name = "senha", columnDefinition = "blob")
+	private String senhaCriptografada;
+	
 	/** Campo que define se o usuário se encontra ativo ou não */
 	@Column(nullable = false)
 	private Boolean ativo;
-
+	
 	// Getters & Setters
 
 	/**
@@ -223,6 +227,26 @@ public class Usuario extends Model implements Authentication {
 	 */
 	public String getSenha() {
 		return senha;
+	}
+	
+	/**
+	 * Método retorna o campo senha criptografado através do algoritmo MD5
+	 * 
+	 * @return campo senha em MD5
+	 */
+	public String getSenhaCriptografada() {
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] array = md.digest(senha.getBytes());
+			StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+              sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+           }
+            return sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**

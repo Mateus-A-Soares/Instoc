@@ -1,5 +1,7 @@
 package br.com.lupus.controllers;
 
+import java.util.HashMap;
+
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,13 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.lupus.exceptions.ConflictException;
 import br.com.lupus.exceptions.EntityNotFound;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Ambiente;
 import br.com.lupus.models.Item;
+import br.com.lupus.models.Movimentacao;
 import br.com.lupus.models.TipoItem;
 import br.com.lupus.models.Usuario;
 import br.com.lupus.services.ItemService;
+import br.com.lupus.services.MovimentacaoService;
 import br.com.lupus.utils.BindingResultUtils;
 
 /**
@@ -34,6 +40,9 @@ public class ItemController {
 
 	@Autowired
 	private ItemService itemService;
+	
+	@Autowired
+	private MovimentacaoService movimentacaoService;
 
 	/**
 	 * End-point de URL /api/v1/item - Retorna ao cliente que fez a requisição um
@@ -168,6 +177,23 @@ public class ItemController {
 		} catch (Exception e) {
 			// 500 - INTERNAL SERVER ERROR
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PatchMapping("/{itemId}/movimenta/{ambienteId}")
+	public ResponseEntity<Object> movimentar(@PathVariable Long itemId, @PathVariable Long ambienteId) {
+		try {
+			Movimentacao.setParametros(new Movimentacao(), "id", "dataMovimentacao", "itemMovimentado", "ambienteAnterior", "ambientePosterior", "movimentador");
+			Item.setParametros(new Item(), "id");
+			Ambiente.setParametros(new Ambiente(), "id");
+			Usuario.setParametros(new Usuario(), "id", "nome", "permissao", "ativo");
+			return ResponseEntity.ok(movimentacaoService.movimentar(itemId, ambienteId));
+		} catch (EntityNotFound e) {
+			return ResponseEntity.notFound().build();
+		} catch (ConflictException e) {
+			HashMap<String, String> map = new HashMap<>();
+			map.put("x-motivo", "O item já se encontra nesse ambiente");
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(map);
 		}
 	}
 }

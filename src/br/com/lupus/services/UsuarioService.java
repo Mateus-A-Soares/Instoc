@@ -46,7 +46,7 @@ public class UsuarioService {
 			throw new UnprocessableEntityException();
 		} else {
 
-			Usuario usuarioAutenticado = usuarioDao.buscar(usuario.getEmail(), usuario.getSenha());
+			Usuario usuarioAutenticado = usuarioDao.buscar(usuario.getEmail(), usuario.getSenhaCriptografada());
 			if (usuarioAutenticado == null) {
 
 				throw new EntityNotFound();
