@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Ambiente;
 import br.com.lupus.models.Item;
@@ -74,7 +74,7 @@ public class AmbienteController {
 			Item.setParametros(new Item(), "id", "tipo");
 			TipoItem.setParametros(new TipoItem(), "nome");
 			return ResponseEntity.ok(ambienteService.buscarAmbiente(id));
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
@@ -138,7 +138,7 @@ public class AmbienteController {
 			Ambiente.setParametros(new Ambiente(), "id", "descricao", "cadastrante");
 			Usuario.setParametros(new Usuario(), "id", "nome", "email", "permissao", "ativo");
 			return ResponseEntity.ok(ambienteService.atualizar(ambiente, brAmbiente));
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (UnprocessableEntityException e) {
@@ -169,7 +169,7 @@ public class AmbienteController {
 			// 202 - NO CONTENT
 			ambienteService.deletarAmbiente(id);
 			return ResponseEntity.noContent().build();
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (UnprocessableEntityException e) {

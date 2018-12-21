@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.lupus.exceptions.ConflictException;
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Ambiente;
 import br.com.lupus.models.Item;
@@ -81,7 +81,7 @@ public class ItemController {
 			Usuario.setParametros(new Usuario(), "id", "nome", "email", "ativo");
 			Ambiente.setParametros(new Ambiente(), "id", "descricao");
 			return ResponseEntity.ok(itemService.buscar(id));
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
@@ -141,7 +141,7 @@ public class ItemController {
 			Usuario.setParametros(new Usuario(), "id", "nome", "email", "permissao", "ativo");
 			Ambiente.setParametros(new Ambiente(), "id", "descricao");
 			return ResponseEntity.ok(itemService.atualizar(item, brItem));
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (UnprocessableEntityException e) {
@@ -171,7 +171,7 @@ public class ItemController {
 			// 202 - OK / NO CONTENT
 			itemService.deletarItem(id);
 			return ResponseEntity.noContent().build();
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
@@ -188,7 +188,7 @@ public class ItemController {
 			Ambiente.setParametros(new Ambiente(), "id");
 			Usuario.setParametros(new Usuario(), "id", "nome", "permissao", "ativo");
 			return ResponseEntity.ok(movimentacaoService.movimentar(itemId, ambienteId));
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			return ResponseEntity.notFound().build();
 		} catch (ConflictException e) {
 			HashMap<String, String> map = new HashMap<>();

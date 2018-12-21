@@ -15,7 +15,7 @@ import org.springframework.validation.FieldError;
 
 import br.com.lupus.dao.TipoItemDao;
 import br.com.lupus.dao.TipoItemTagDao;
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.TipoItem;
 import br.com.lupus.models.TipoItemTag;
@@ -51,14 +51,14 @@ public class TipoItemService {
 	 * @param id
 	 *            id do tipo-item procurado
 	 * @return objeto tipo-item populado
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada quando não existe tipo-item referenciado ao id passado
 	 */
 	@Transactional(value = TxType.REQUIRED)
-	public TipoItem buscaTipo(Long id) throws EntityNotFound {
+	public TipoItem buscaTipo(Long id) throws EntityNotFoundException {
 		TipoItem tipoItem = tipoItemDao.buscar(id);
 		if (tipoItem == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		Hibernate.initialize(tipoItem.getCadastrante());
 		Hibernate.initialize(tipoItem.getTagsAnexadas());
 		Hibernate.initialize(tipoItem.getItensAnexados());
@@ -111,7 +111,7 @@ public class TipoItemService {
 	 * @param brTipo
 	 *            objeto populado com os possíveis erros de validação
 	 * @return objeto TipoItem populado com o registro que foi atualizado
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada se o registro a ser editado não for encontrado
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver erros de validação
@@ -119,10 +119,10 @@ public class TipoItemService {
 	 */
 	@Transactional(value = TxType.REQUIRED)
 	public TipoItem editarTipo(@Valid TipoItem tipoItem, BindingResult brTipo)
-			throws EntityNotFound, UnprocessableEntityException {
+			throws EntityNotFoundException, UnprocessableEntityException {
 		TipoItem tipoItemAntigo = tipoItemDao.buscar(tipoItem.getId());
 		if (tipoItemAntigo == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		if (brTipo.hasFieldErrors())
 			throw new UnprocessableEntityException();
 		if (tipoItem.getNome() != null)
@@ -145,17 +145,17 @@ public class TipoItemService {
 	 *            objeto tag populado
 	 * @param brTag
 	 *            objeto populado com os possíveis erros de validação
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             dispara se não existir registro de TipoItem referente ao id
 	 *             passado
 	 * @throws UnprocessableEntityException
 	 *             dispara se hover erros de validação
 	 */
 	public void persistirTag(Long id, TipoItemTag tag, BindingResult brTag)
-			throws EntityNotFound, UnprocessableEntityException {
+			throws EntityNotFoundException, UnprocessableEntityException {
 		TipoItem tipoItem = tipoItemDao.buscar(id);
 		if (tipoItem == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		if (brTag.hasFieldErrors())
 			throw new UnprocessableEntityException();
 		tag.setTipoItem(tipoItem);
@@ -171,14 +171,14 @@ public class TipoItemService {
 	 *            id do TipoItem referente a lista de tags
 	 * @param tags
 	 *            lista de objetos tag populados
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             dispara se não existir registro de TipoItem referente ao id
 	 *             passado
 	 */
-	public void persistirTags(Long id, List<TipoItemTag> tags) throws EntityNotFound {
+	public void persistirTags(Long id, List<TipoItemTag> tags) throws EntityNotFoundException {
 		TipoItem tipoItem = tipoItemDao.buscar(id);
 		if (tipoItem == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 
 		for (int i = 0; i < tags.size(); i++) {
 			TipoItemTag tag = tags.get(i);
@@ -200,13 +200,13 @@ public class TipoItemService {
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver chaves estrangeiras apontando para este
 	 *             tipo-item
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada se o registro a ser excluido não for encontrado
 	 */
-	public void deletarTipo(Long id) throws EntityNotFound, UnprocessableEntityException {
+	public void deletarTipo(Long id) throws EntityNotFoundException, UnprocessableEntityException {
 		TipoItem tipoItem = tipoItemDao.buscar(id);
 		if (tipoItem == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		if (tipoItem.getItensAnexados() != null)
 			throw new UnprocessableEntityException();
 		tipoItemDao.deletar(tipoItem);

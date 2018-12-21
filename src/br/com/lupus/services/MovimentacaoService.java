@@ -14,7 +14,7 @@ import br.com.lupus.dao.AmbienteDao;
 import br.com.lupus.dao.ItemDao;
 import br.com.lupus.dao.MovimentacaoDao;
 import br.com.lupus.exceptions.ConflictException;
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.models.Ambiente;
 import br.com.lupus.models.Item;
 import br.com.lupus.models.Movimentacao;
@@ -47,19 +47,19 @@ public class MovimentacaoService {
 	 *            id do item a ser movimentado
 	 * @param ambienteId
 	 *            id do ambiente a qual o item está sendo redirecionado
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada se uma das entidades não for encontrada
 	 * @throws ConflictException
 	 *             disparada se o item estiver sendo movido para o local em que ele
 	 *             já se encontra
 	 */
 	@Transactional(value = TxType.REQUIRED)
-	public Movimentacao movimentar(Long itemId, Long ambienteId) throws EntityNotFound, ConflictException {
+	public Movimentacao movimentar(Long itemId, Long ambienteId) throws EntityNotFoundException, ConflictException {
 		Item item = itemDao.buscar(itemId);
 		Ambiente ambiente = ambienteDao.buscar(ambienteId);
 		;
 		if (item == null || ambiente == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		Hibernate.initialize(item.getAmbienteAtual());
 		if (item.getAmbienteAtual().getId() == ambienteId)
 			throw new ConflictException();

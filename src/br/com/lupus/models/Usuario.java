@@ -1,6 +1,6 @@
 package br.com.lupus.models;
 
-import java.security.MessageDigest;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
@@ -65,7 +64,8 @@ public class Usuario extends Model implements Authentication {
 	 * @param permissao
 	 *            parâmetro permissão do objeto
 	 */
-	public Usuario(Long id, String nome, String email, Date dataNascimento, Permissao permissao, String senha, boolean ativo) {
+	public Usuario(Long id, String nome, String email, Date dataNascimento, Permissao permissao, String senha,
+			boolean ativo) {
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
@@ -109,16 +109,13 @@ public class Usuario extends Model implements Authentication {
 
 	/** Chave de acesso do usuário */
 	@Size(min = 3, max = 20)
-	@Transient
-	private String senha;
-	
 	@Column(nullable = false, unique = false, name = "senha", columnDefinition = "blob")
-	private String senhaCriptografada;
-	
+	private String senha;
+
 	/** Campo que define se o usuário se encontra ativo ou não */
 	@Column(nullable = false)
 	private Boolean ativo;
-	
+
 	// Getters & Setters
 
 	/**
@@ -228,26 +225,6 @@ public class Usuario extends Model implements Authentication {
 	public String getSenha() {
 		return senha;
 	}
-	
-	/**
-	 * Método retorna o campo senha criptografado através do algoritmo MD5
-	 * 
-	 * @return campo senha em MD5
-	 */
-	public String getSenhaCriptografada() {
-		try {
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] array = md.digest(senha.getBytes());
-			StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < array.length; ++i) {
-              sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
-           }
-            return sb.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 
 	/**
 	 * Define uma chave de acesso para o usuário
@@ -258,11 +235,10 @@ public class Usuario extends Model implements Authentication {
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	
 
 	/**
 	 * Retorna o estado do usuário (ativo / desativado)
-	 *  
+	 * 
 	 * @return true se ativo, false se desativado
 	 */
 	public Boolean getAtivo() {
@@ -271,12 +247,14 @@ public class Usuario extends Model implements Authentication {
 
 	/**
 	 * Define o estado do usuário (ativo / desativado)
-	 * @param ativo true se ativo, false se desativado
+	 * 
+	 * @param ativo
+	 *            true se ativo, false se desativado
 	 */
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
-	
+
 	// Métodos sobreescritos para a autenticação com o Spring Security
 	@Override
 	@JsonIgnore
@@ -330,6 +308,7 @@ public class Usuario extends Model implements Authentication {
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", nome=" + nome + "]";
-	}
+		return "Usuario [id=" + id + ", nome=" + nome + ", email=" + email + ", dataNascimento=" + dataNascimento
+				+ ", permissao=" + permissao + ", senha=" + senha + ", ativo=" + ativo + "]";
+	}	
 }

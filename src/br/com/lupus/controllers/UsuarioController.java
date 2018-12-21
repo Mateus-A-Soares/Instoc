@@ -1,5 +1,7 @@
 package br.com.lupus.controllers;
 
+import java.util.LinkedList;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Usuario;
 import br.com.lupus.services.UsuarioService;
@@ -67,7 +69,7 @@ public class UsuarioController {
 			// 200 - OK
 			Usuario.setParametros(new Usuario(), "id", "nome", "email", "dataNascimento", "permissao", "ativo");
 			return ResponseEntity.ok(usuarioService.buscar(id));
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
@@ -92,6 +94,7 @@ public class UsuarioController {
 	public ResponseEntity<Object> cadastrarUsuario(@Valid @RequestBody Usuario usuario, BindingResult brUsuario) {
 		try {
 			// 202 - OK / NO CONTENT
+			System.out.println(usuario.toString());
 			usuarioService.persistir(usuario, brUsuario);
 			return ResponseEntity.noContent().build();
 		} catch (UnprocessableEntityException e) {
@@ -127,6 +130,40 @@ public class UsuarioController {
 		} catch (UnprocessableEntityException e) {
 			// 422 - UNPROCESSABLE ENTITY
 			return ResponseEntity.unprocessableEntity().body(BindingResultUtils.toHashMap(brUsuario));
+		} catch (Exception e) {
+			// 500 - INTERNAL SERVER ERROR
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * End-point de URL /api/v1/usuario/{id do usuario a ser editado}/senha - Recebe
+	 * no corpo da requisição um objeto JSON contendo uma senha representando a nova
+	 * senha do usuário, o end-point valida ela e tenta editar no id informado na
+	 * url da requisição, se o processo ocorrer com sucesso retorna o status 202.
+	 * 
+	 * @param id
+	 *            id do usuário que editará a senha
+	 * @param usuario
+	 *            objeto usuario com os valores a serem alterados
+	 * @param brUsuario
+	 *            objeto populado com os possíveis erros de validação
+	 * @return ResponseEntity populado com o usuário editado
+	 */
+	@PutMapping("/{id}/senha")
+	public ResponseEntity<Object> editarSenhaUsuario(@PathVariable Long id, @Valid @RequestBody Usuario usuario,
+			BindingResult brUsuario) {
+		try {
+			// 200 - OK
+			usuario.setId(id);
+			usuarioService.atualizarSenha(usuario, brUsuario);
+			return ResponseEntity.noContent().build();
+		} catch (UnprocessableEntityException e) {
+			// 422 - UNPROCESSABLE ENTITY
+			List<String> campos = new LinkedList<>();
+			campos.add("senha");
+			return ResponseEntity.unprocessableEntity().body(BindingResultUtils.toHashMap(brUsuario, campos));
 		} catch (Exception e) {
 			// 500 - INTERNAL SERVER ERROR
 			e.printStackTrace();

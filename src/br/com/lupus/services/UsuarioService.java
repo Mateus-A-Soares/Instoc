@@ -1,16 +1,17 @@
 package br.com.lupus.services;
 
 import java.util.List;
-import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import br.com.lupus.dao.UsuarioDao;
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
+import br.com.lupus.exceptions.ForbbidenException;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Usuario;
+import br.com.lupus.utils.CryptUtils;
 
 /**
  * Classe com os métodos auxiliares referentes ao CRUD de usuários
@@ -35,25 +36,27 @@ public class UsuarioService {
 	 * @throws ValidationException
 	 *             exception disparada se há erros de validação em um dos dois
 	 *             campos (email ou senha)
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             exception disparada se não existir usuário com o email e senha
 	 *             passados
+	 * @throws ForbbidenException
 	 */
-	public Usuario getEmailSenha(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException, EntityNotFound {
+	public Usuario getEmailSenha(Usuario usuario, BindingResult brUsuario)
+			throws UnprocessableEntityException, EntityNotFoundException, ForbbidenException {
 
 		if (brUsuario.hasFieldErrors("email") || brUsuario.hasFieldErrors("senha")) {
 
 			throw new UnprocessableEntityException();
 		} else {
 
-			Usuario usuarioAutenticado = usuarioDao.buscar(usuario.getEmail(), usuario.getSenhaCriptografada());
-			if (usuarioAutenticado == null) {
-
-				throw new EntityNotFound();
-			} else {
-
-				return usuarioAutenticado;
+			Usuario usuarioAutenticado = usuarioDao.buscar(usuario.getEmail(), CryptUtils.md5(usuario.getSenha()));
+			if (usuarioAutenticado == null)
+				throw new EntityNotFoundException();
+			else if (!usuarioAutenticado.getAtivo()) {
+				brUsuario.addError(new FieldError("usuario", "ativo", "usuario desativado"));
+				throw new ForbbidenException();
 			}
+			return usuarioAutenticado;
 		}
 	}
 
@@ -63,13 +66,13 @@ public class UsuarioService {
 	 * @param id
 	 *            número de identificação usado na procura
 	 * @return usuário referente ao id
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 */
-	public Usuario buscar(Long id) throws EntityNotFound {
+	public Usuario buscar(Long id) throws EntityNotFoundException {
 
 		Usuario usuario = usuarioDao.buscar(id);
 		if (usuario == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		return usuario;
 	}
 
@@ -136,7 +139,8 @@ public class UsuarioService {
 	 * @throws UnprocessableEntityException
 	 *             exception disparada quando há erros de validação
 	 */
-	public Usuario atualizar(Usuario usuario, BindingResult brUsuario) throws UnprocessableEntityException, EntityNotFoundException {
+	public Usuario atualizar(Usuario usuario, BindingResult brUsuario)
+			throws UnprocessableEntityException, EntityNotFoundException {
 		Usuario usuarioAntigo = usuarioDao.buscar(usuario.getEmail());
 		if (usuarioAntigo != null && usuarioAntigo.getId() != usuario.getId()) {
 			brUsuario.addError(new FieldError("usuario", "email", "endereço de email já cadastrado"));
@@ -157,11 +161,32 @@ public class UsuarioService {
 				usuarioAntigo.setEmail(usuario.getEmail());
 			if (usuario.getNome() != null)
 				usuarioAntigo.setNome(usuario.getNome());
-			if (usuario.getSenha() != null)
-				usuarioAntigo.setSenha(usuario.getSenha());
 			usuarioDao.atualizar(usuarioAntigo);
 		}
 		return usuarioAntigo;
+	}
+
+	/**
+	 * Método que edita a senha de um usuário cadastrado na base de dados. Recebe um
+	 * usuário, verifica possíveis erros no campo senha, caso não haja erros de
+	 * validação, edita a senha do usuário na base de dados.
+	 * 
+	 * @param usuario
+	 *            usuário a editar a senha
+	 * @param brUsuario
+	 *            objeto populado com os possíveis erros de validação
+	 * @throws UnprocessableEntityException
+	 *             exception disparada quando há erros de validação
+	 */
+	public Usuario atualizarSenha(Usuario usuario, BindingResult brUsuario)
+			throws EntityNotFoundException, UnprocessableEntityException {
+		Usuario usuarioAntigo = usuarioDao.buscar(usuario.getId());
+		if (usuarioAntigo == null)
+			throw new EntityNotFoundException();
+		if (brUsuario.hasFieldErrors("senha"))
+			throw new UnprocessableEntityException();
+		usuarioDao.atualizarSenha(usuario);
+		return usuario;
 	}
 
 	/**
@@ -171,13 +196,13 @@ public class UsuarioService {
 	 * @param id
 	 *            id do usuário a ser desativado
 	 * @return usuário desativado
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             exception disparada quando o id não corresponde a nenhum usuário
 	 */
-	public Usuario desativar(Long id) throws EntityNotFound {
+	public Usuario desativar(Long id) throws EntityNotFoundException {
 		Usuario usuarioAntigo = usuarioDao.buscar(id);
 		if (usuarioAntigo == null) {
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		} else {
 			usuarioAntigo.setAtivo(false);
 			usuarioDao.atualizar(usuarioAntigo);

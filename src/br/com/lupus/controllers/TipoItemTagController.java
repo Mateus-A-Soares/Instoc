@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.services.TipoItemTagService;
 
 /**
@@ -41,7 +41,7 @@ public class TipoItemTagController {
 			// 202 - NO CONTENT / OK
 			tagService.deletar(id);
 			return ResponseEntity.noContent().build();
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			// 404 - NOT FOUND
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {

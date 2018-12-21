@@ -22,6 +22,15 @@ CREATE
 	END$$
 DELIMITER ;
 
+DELIMITER $$
+CREATE
+		TRIGGER trg_usuario_update BEFORE UPDATE
+		ON usuario
+		FOR EACH ROW BEGIN
+			SET NEW.senha = md5(NEW.senha);
+	END$$
+DELIMITER ;
+
 CREATE TABLE ambiente(
 	id BIGINT SIGNED NOT NULL AUTO_INCREMENT,
     descricao VARCHAR(75) NOT NULL,

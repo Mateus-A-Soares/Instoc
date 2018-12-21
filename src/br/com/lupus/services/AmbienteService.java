@@ -12,7 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import br.com.lupus.dao.AmbienteDao;
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Ambiente;
 import br.com.lupus.models.Usuario;
@@ -44,14 +44,14 @@ public class AmbienteService {
 	 * @param id
 	 *            id do ambiente procurado
 	 * @return objeto ambiente populado
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada quando não existe ambiente referenciado ao id passado
 	 */
 	@Transactional(value = TxType.REQUIRED)
-	public Ambiente buscarAmbiente(Long id) throws EntityNotFound {
+	public Ambiente buscarAmbiente(Long id) throws EntityNotFoundException {
 		Ambiente ambiente = ambienteDao.buscar(id);
 		if (ambiente == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		Hibernate.initialize(ambiente.getCadastrante());
 		Hibernate.initialize(ambiente.getItens()); // Popula os itens antes de retornar o ambiente
 		return ambiente;
@@ -88,7 +88,7 @@ public class AmbienteService {
 	 * @param brAmbiente
 	 *            objeto populado com os possíveis erros de validação
 	 * @return objeto ambiente populado com o registro que foi atualizado
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada se o registro a ser editado não for encontrado
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver erros de validação
@@ -96,10 +96,10 @@ public class AmbienteService {
 	 */
 	@Transactional(value = TxType.REQUIRED)
 	public Ambiente atualizar(Ambiente ambiente, BindingResult brAmbiente)
-			throws EntityNotFound, UnprocessableEntityException {
+			throws EntityNotFoundException, UnprocessableEntityException {
 		Ambiente ambienteAntigo = ambienteDao.buscar(ambiente.getId());
 		if (ambienteAntigo == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		if (brAmbiente.hasFieldErrors())
 			throw new UnprocessableEntityException();
 		if (ambiente.getDescricao() != null)
@@ -120,13 +120,13 @@ public class AmbienteService {
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver chaves estrangeiras apontando para este
 	 *             ambiente
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada se o registro a ser excluido não for encontrado
 	 */
-	public void deletarAmbiente(Long id) throws UnprocessableEntityException, EntityNotFound {
+	public void deletarAmbiente(Long id) throws UnprocessableEntityException, EntityNotFoundException {
 		Ambiente ambiente = ambienteDao.buscar(id);
 		if (ambiente == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		if (!ambiente.getItens().isEmpty())
 			throw new UnprocessableEntityException();
 		ambienteDao.deletar(id);

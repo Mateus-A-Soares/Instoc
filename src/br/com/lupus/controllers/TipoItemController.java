@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Item;
 import br.com.lupus.models.TipoItem;
@@ -73,7 +73,7 @@ public class TipoItemController {
 			TipoItemTag.setParametros(new TipoItemTag(), "id", "cabecalho", "corpo", "tipo");
 			Item.setParametros(new Item(), "id");
 			return ResponseEntity.ok(tipoItemService.buscaTipo(id));
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -151,7 +151,7 @@ public class TipoItemController {
 		try {
 			tipoItemService.deletarTipo(id);
 			return ResponseEntity.noContent().build();
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			return ResponseEntity.notFound().build();
 		} catch (UnprocessableEntityException e) {
 			HashMap<String, String> hashMap = new HashMap<>();
@@ -181,7 +181,7 @@ public class TipoItemController {
 		try {
 			tipoItemService.persistirTag(id, tag, brTag);
 			return ResponseEntity.noContent().build();
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			return ResponseEntity.notFound().build();
 		} catch (UnprocessableEntityException e) {
 			return ResponseEntity.unprocessableEntity().body(BindingResultUtils.toHashMap(brTag));
@@ -206,7 +206,7 @@ public class TipoItemController {
 		try {
 			tipoItemService.persistirTags(id, tags);
 			return ResponseEntity.noContent().build();
-		} catch (EntityNotFound e) {
+		} catch (EntityNotFoundException e) {
 			return ResponseEntity.notFound().build();
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

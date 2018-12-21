@@ -14,7 +14,7 @@ import org.springframework.validation.FieldError;
 import br.com.lupus.dao.AmbienteDao;
 import br.com.lupus.dao.ItemDao;
 import br.com.lupus.dao.TipoItemDao;
-import br.com.lupus.exceptions.EntityNotFound;
+import br.com.lupus.exceptions.EntityNotFoundException;
 import br.com.lupus.exceptions.UnprocessableEntityException;
 import br.com.lupus.models.Ambiente;
 import br.com.lupus.models.Item;
@@ -53,14 +53,14 @@ public class ItemService {
 	 * @param id
 	 *            id do item procurado
 	 * @return objeto item populado
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada quando não existe item referenciado ao id passado
 	 */
 	@Transactional(value = TxType.REQUIRED)
-	public Item buscar(Long id) throws EntityNotFound {
+	public Item buscar(Long id) throws EntityNotFoundException {
 		Item item = itemDao.buscar(id);
 		if (item == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		Hibernate.initialize(item.getCadastrante());
 		Hibernate.initialize(item.getAmbienteAtual());
 		return item;
@@ -109,14 +109,14 @@ public class ItemService {
 	 * @return objeto item populado com o registro que foi atualizado
 	 * @throws UnprocessableEntityException
 	 *             disparada se houver erros de validação
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada se o registro a ser editado não for encontrado
 	 */
 	@Transactional(value = TxType.REQUIRED)
-	public Item atualizar(@Valid Item item, BindingResult brItem) throws UnprocessableEntityException, EntityNotFound {
+	public Item atualizar(@Valid Item item, BindingResult brItem) throws UnprocessableEntityException, EntityNotFoundException {
 		Item itemAntigo = itemDao.buscar(item.getId());
 		if (itemAntigo == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		if (item.getTipo() != null && item.getTipo().getId() != null) {
 			TipoItem tipoItem = tipoItemDao.buscar(item.getTipo().getId());
 			if (tipoItem == null)
@@ -138,13 +138,13 @@ public class ItemService {
 	 * 
 	 * @param id
 	 *            id do item a ser excluido
-	 * @throws EntityNotFound
+	 * @throws EntityNotFoundException
 	 *             disparada se o registro a ser excluido não for encontrado
 	 */
-	public void deletarItem(Long id) throws EntityNotFound {
+	public void deletarItem(Long id) throws EntityNotFoundException {
 		Item item = itemDao.buscar(id);
 		if (item == null)
-			throw new EntityNotFound();
+			throw new EntityNotFoundException();
 		itemDao.deletar(item);
 	}
 }
